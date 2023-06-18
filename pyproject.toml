@@ -11,6 +11,7 @@ packages = [{include = "telegram_vpn"}]
 python = "^3.10"
 aiogram = "^2.25.1"
 envparse = "^0.2.0"
+python-dotenv = "^1.0.0"
 
 
 [build-system]

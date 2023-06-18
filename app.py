@@ -7,17 +7,17 @@ from aiogram.dispatcher import Dispatcher
 from aiogram.utils.executor import start_webhook
 
 import config
+from handlers import HandlersRegistrator
 
 
-# webhook settings
 WEBHOOK_HOST = config.WEBHOOK_TELEGRAM_HOST
 WEBHOOK_PATH = config.WEBHOOK_TELEGRAM_PATH
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
-bot = Bot(config.TELEGRAM_TOKEN)
+bot = Bot(token=config.TELEGRAM_TOKEN)
 storage = MemoryStorage()
-
-dispatcher = Dispatcher(bot, storage=storage)
+dispatcher = Dispatcher(bot=bot, storage=storage)
+bot_app = HandlersRegistrator(bot=bot, dispatcher=dispatcher)
 
 
 async def on_startup(dp: Dispatcher):
@@ -25,11 +25,12 @@ async def on_startup(dp: Dispatcher):
     user_commands = [types.BotCommand('start', 'Домой')]
     await dp.bot.set_my_commands(user_commands)
 
+
 if __name__ == '__main__':
     start_webhook(dispatcher=dispatcher,
                   webhook_path=WEBHOOK_PATH,
                   on_startup=on_startup,
                   on_shutdown=None,
                   skip_updates=True,
-                  host=WEBHOOK_HOST,
+                  host=config.WEBAPP_HOST,
                   port=config.APP_PORT)
