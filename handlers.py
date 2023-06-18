@@ -1,11 +1,6 @@
 """
 Регистрация обработчиков
 """
-
-
-"""
-Основной модуль с регистрацией хэндлеров
-"""
 from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
 from aiogram.types.message import ContentTypes
@@ -21,7 +16,6 @@ class HandlersRegistrator:
 
     def register_handlers(self, dp: Dispatcher):
         # Приветственное сообщение
-        dp.register_message_handler(dp.async_task(self.main.start), commands='start', state='*')
-        # # Возврат SQL присланного ботом
-        # dp.register_callback_query_handler(self.reports.view_sql, text_contains='return_sql',
-        #                                    state='reports')
+        dp.register_message_handler(self.main.start, commands='start', state='*')
+        # Показ пользователей
+        dp.register_callback_query_handler(self.main.get_users, text_contains='get_users', state='*')
