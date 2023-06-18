@@ -5,6 +5,7 @@
 import aiohttp
 
 import config
+from firezone_api.models import User
 
 
 class FirezoneApi:
@@ -15,13 +16,14 @@ class FirezoneApi:
         self._headers = {'Content-Type': 'application/json',
                          'Authorization': f'Bearer {token}'}
 
-    async def get_users(self) -> dict:
+    async def get_users(self) -> list[User]:
         """
         Получает список пользователей
         """
         url = f"{self._host}/v0/users"
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._headers) as response:
-                users = await response.json()
+                users: list[dict] = await response.json()
                 users = users['data']
+                users = [User(**user) for user in users]
                 return users
