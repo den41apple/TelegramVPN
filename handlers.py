@@ -25,5 +25,10 @@ class HandlersRegistrator:
         dp.register_message_handler(self.main.start, commands='start', state='*')
         # Показ пользователей
         dp.register_callback_query_handler(self.users.get_users, text_contains='get_users', state='*')
-        # Показ пользователей
+        # Показ устройств
         dp.register_callback_query_handler(self.devices.get_devices, text_contains='get_devices', state='*')
+        # Создать новую конфигурацию, ввести имя
+        dp.register_callback_query_handler(self.devices.get_name_for_new_device,
+                                           text_contains='create_device', state='*')
+        # Создать новую кофигурацию
+        dp.register_message_handler(self.devices.create_new_device, state='enter_device_name')

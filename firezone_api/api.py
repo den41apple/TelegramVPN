@@ -3,9 +3,11 @@
 Документация https://www.firezone.dev/docs/reference/rest-api/
 """
 import aiohttp
+import json
 
 import config
 from firezone_api.models import User, Device
+from firezone_api.generators import KeysGenerator
 
 
 class FirezoneApi:
@@ -15,6 +17,7 @@ class FirezoneApi:
         self._token = token
         self._headers = {'Content-Type': 'application/json',
                          'Authorization': f'Bearer {token}'}
+        self._keys_generator = KeysGenerator()
 
     async def get_users(self) -> list[User]:
         """
@@ -39,3 +42,20 @@ class FirezoneApi:
                 devices: list[dict] = devices['data']
                 devices: list[Device] = [Device(**user) for user in devices]
                 return devices
+
+    async def create_device(self, user_id: str, device_name: str, description: str = None) -> Device:
+        """
+        Создает конфигурацию устройства
+        """
+        url = f"{self._host}/v0/devices"
+        self._keys_generator.generate()
+        params = {"device": {"description": description,
+                             "name": device_name,
+                             "preshared_key": self._keys_generator.preshared_key,
+                             "public_key": self._keys_generator.public_key,
+                             "user_id": user_id}}
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=self._headers, data=json.dumps(params)) as response:
+                device: dict = await response.json()
+                device: dict = device['data']
+                return Device(**device, private_key=self._keys_generator.private_key)

@@ -21,6 +21,7 @@ class Device(BaseModel):
     persistent_keepalive: int
     preshared_key: str
     public_key: str
+    private_key: str | None
     remote_ip: str | None
     rx_bytes: int | None
     server_public_key: str

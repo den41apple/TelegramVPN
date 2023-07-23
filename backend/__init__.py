@@ -1,0 +1,1 @@
+from .configuration_message import prepare_configuration_qr_and_message
