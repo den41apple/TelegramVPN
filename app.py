@@ -4,7 +4,7 @@
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
-from aiogram.utils.executor import start_webhook
+from aiogram.utils.executor import start_webhook, start_polling
 
 import config
 from handlers import HandlersRegistrator
@@ -27,10 +27,20 @@ async def on_startup(dp: Dispatcher):
 
 
 if __name__ == '__main__':
-    start_webhook(dispatcher=dispatcher,
-                  webhook_path=WEBHOOK_PATH,
+    # start_webhook(dispatcher=dispatcher,
+    #               webhook_path=WEBHOOK_PATH,
+    #               on_startup=on_startup,
+    #               on_shutdown=None,
+    #               skip_updates=True,
+    #               host=config.WEBAPP_HOST,
+    #               port=config.APP_PORT)
+
+    start_polling(dispatcher=dispatcher,
+                  loop=None,
+                  skip_updates=False,
+                  reset_webhook=True,
                   on_startup=on_startup,
                   on_shutdown=None,
-                  skip_updates=True,
-                  host=config.WEBAPP_HOST,
-                  port=config.APP_PORT)
+                  timeout=20,
+                  relax=0.1,
+                  fast=True, )

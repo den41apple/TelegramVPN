@@ -19,21 +19,8 @@ class Main:
         Приветственное сообщение
         """
         keyboard = InlineKeyboardMarkup()
-        button = InlineKeyboardButton("Показать пользователей", callback_data="/get_users")
-        keyboard.add(button)
+        keyboard.add(InlineKeyboardButton("Список пользователей", callback_data="/get_users"))
+        keyboard.add(InlineKeyboardButton("Список Устройств", callback_data="/get_devices"))
         await message.answer("Привет", reply_markup=keyboard)
 
-    async def get_users(self, callback_query: CallbackQuery, state: FSMContext):
-        """
-        Отображает список пользователей
-        """
-        users: list[User] = await self._api.get_users()
-        answer = ""
-        for i, user in enumerate(users):
-            answer += f"Пользователь №{i+1}:"
-            answer += f"\nemail: {user.email}"
-            answer += f"\nrole: {user.role}"
-            answer += f"\ncreated at: {user.last_signed_in_at}"
-            answer += '\n\n'
-        await callback_query.message.answer(answer)
 

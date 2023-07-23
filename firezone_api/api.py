@@ -5,7 +5,7 @@
 import aiohttp
 
 import config
-from firezone_api.models import User
+from firezone_api.models import User, Device
 
 
 class FirezoneApi:
@@ -27,3 +27,15 @@ class FirezoneApi:
                 users = users['data']
                 users = [User(**user) for user in users]
                 return users
+
+    async def get_devices(self) -> list[Device]:
+        """
+        Получает список устройств
+        """
+        url = f"{self._host}/v0/devices"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=self._headers) as response:
+                devices: list[dict] = await response.json()
+                devices = devices['data']
+                devices = [Device(**user) for user in devices]
+                return devices
