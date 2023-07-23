@@ -23,9 +23,9 @@ class FirezoneApi:
         url = f"{self._host}/v0/users"
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._headers) as response:
-                users: list[dict] = await response.json()
-                users = users['data']
-                users = [User(**user) for user in users]
+                users: dict = await response.json()
+                users: list[dict] = users['data']
+                users: list[User] = [User(**user) for user in users]
                 return users
 
     async def get_devices(self) -> list[Device]:
@@ -35,7 +35,7 @@ class FirezoneApi:
         url = f"{self._host}/v0/devices"
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._headers) as response:
-                devices: list[dict] = await response.json()
-                devices = devices['data']
-                devices = [Device(**user) for user in devices]
+                devices: dict = await response.json()
+                devices: list[dict] = devices['data']
+                devices: list[Device] = [Device(**user) for user in devices]
                 return devices
