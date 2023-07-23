@@ -1,0 +1,12 @@
+version: "3.9"
+name: telegram_vpn_bot
+services:
+  app:
+    container_name: bot
+    build:
+      dockerfile: ./Dockerfile
+      context: ./
+    env_file:
+      - .env
+    volumes:
+      - ./:/app

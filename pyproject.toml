@@ -5,7 +5,7 @@ description = ""
 authors = ["Andrey Silnykh"]
 license = "MIT"
 readme = "README.md"
-packages = [{include = "telegram_vpn"}]
+packages = []
 
 [tool.poetry.dependencies]
 python = "^3.10"
