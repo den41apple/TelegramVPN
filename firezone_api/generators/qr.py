@@ -14,7 +14,7 @@ current_dir = Path(__file__).resolve().parent
 class QrCodeGenerator:
 
     def generate(self, data: str):
-        qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_L)
+        qr = qrcode.QRCode(error_correction=qrcode.constants.ERROR_CORRECT_H)
         qr.add_data(data)
         embeded_image_path = current_dir / 'logo.png'
         self.img = qr.make_image(image_factory=StyledPilImage,
