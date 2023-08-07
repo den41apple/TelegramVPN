@@ -21,6 +21,9 @@ configparser = "^6.0.0"
 django = "^4.2.4"
 
 
+[tool.poetry.group.dev.dependencies]
+django-debug-toolbar = "^4.1.0"
+
 [build-system]
 requires = ["poetry-core"]
 build-backend = "poetry.core.masonry.api"
