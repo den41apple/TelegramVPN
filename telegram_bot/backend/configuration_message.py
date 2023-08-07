@@ -3,8 +3,8 @@
 """
 from io import StringIO, BytesIO
 
-from firezone_api.models import Device
-from firezone_api.generators import QrCodeGenerator
+from telegram_bot.firezone_api.models import Device
+from telegram_bot.firezone_api.generators import QrCodeGenerator
 import configparser
 
 qr_generator = QrCodeGenerator()

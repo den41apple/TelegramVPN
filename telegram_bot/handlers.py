@@ -3,11 +3,10 @@
 """
 from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
-from aiogram.types.message import ContentTypes
 
-from dialogs import Main
-from dialogs import Users, Devices
-from dialogs.users import Users
+from telegram_bot.dialogs import Main
+from telegram_bot.dialogs import Devices
+from telegram_bot.dialogs import Users
 
 
 class HandlersRegistrator:

@@ -4,10 +4,10 @@
 from aiogram import Bot, types
 from aiogram.contrib.fsm_storage.memory import MemoryStorage
 from aiogram.dispatcher import Dispatcher
-from aiogram.utils.executor import start_webhook, start_polling
+from aiogram.utils.executor import start_polling
 
-import config
-from handlers import HandlersRegistrator
+from telegram_bot import config
+from telegram_bot.handlers import HandlersRegistrator
 
 
 WEBHOOK_HOST = config.WEBHOOK_TELEGRAM_HOST
@@ -25,8 +25,7 @@ async def on_startup(dp: Dispatcher):
     user_commands = [types.BotCommand('start', 'Домой')]
     await dp.bot.set_my_commands(user_commands)
 
-
-if __name__ == '__main__':
+def main():
     # start_webhook(dispatcher=dispatcher,
     #               webhook_path=WEBHOOK_PATH,
     #               on_startup=on_startup,
@@ -44,3 +43,7 @@ if __name__ == '__main__':
                   timeout=20,
                   relax=0.1,
                   fast=True, )
+
+
+if __name__ == '__main__':
+    main()

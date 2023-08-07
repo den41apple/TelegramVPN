@@ -5,9 +5,9 @@
 import aiohttp
 import json
 
-import config
-from firezone_api.models import User, Device
-from firezone_api.generators import KeysGenerator
+from telegram_bot import config
+from telegram_bot.firezone_api.models import User, Device
+from telegram_bot.firezone_api.generators import KeysGenerator
 
 
 class FirezoneApi:

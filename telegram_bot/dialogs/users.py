@@ -2,11 +2,10 @@
 Работа с пользователями
 """
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import CallbackQuery
 
-from firezone_api import FirezoneApi
-from firezone_api.models import User
+from telegram_bot.firezone_api import FirezoneApi
+from telegram_bot.firezone_api.models import User
 
 
 class Users:

@@ -3,11 +3,10 @@
 """
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
-from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from firezone_api import FirezoneApi
-from firezone_api.models import Device
-from backend import prepare_configuration_qr_and_message
+from telegram_bot.firezone_api import FirezoneApi
+from telegram_bot.firezone_api.models import Device
+from telegram_bot.backend import prepare_configuration_qr_and_message
 
 
 class Devices:

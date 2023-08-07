@@ -3,7 +3,7 @@
 """
 from pydantic import BaseModel, validator
 
-from firezone_api.models.string_datetime_view import StringDatetime
+from telegram_bot.firezone_api.models.string_datetime_view import StringDatetime
 
 
 class User(BaseModel):

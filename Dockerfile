@@ -7,4 +7,4 @@ COPY poetry.lock pyproject.toml ./
 
 RUN poetry install --no-ansi --only main
 
-CMD ["python", "app/app.py"]
+CMD ["python", "app/run_telegram_app.py"]

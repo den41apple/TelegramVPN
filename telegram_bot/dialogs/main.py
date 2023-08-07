@@ -2,11 +2,10 @@
 Основной диалог при начале разговора
 """
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
+from aiogram.types import Message
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
-from firezone_api import FirezoneApi
-from firezone_api.models import User
+from telegram_bot.firezone_api import FirezoneApi
 
 
 class Main:
