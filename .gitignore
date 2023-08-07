@@ -3,3 +3,4 @@
 venv
 *.bat
 firezone-docker
+*.sqlite3
