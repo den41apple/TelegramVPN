@@ -1,6 +1,6 @@
 from django.urls import path
-from .views import landing_page_index
+from .views import LandingPageView
 
 app_name = "landing_page"
 
-urlpatterns = [path("", landing_page_index, name="index")]
+urlpatterns = [path("", LandingPageView.as_view(), name="index")]

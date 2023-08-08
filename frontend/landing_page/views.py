@@ -1,6 +1,15 @@
 from django.http import HttpResponse, HttpRequest
 from django.shortcuts import render
+from django.views.generic import TemplateView
 
 
-def landing_page_index(request: HttpRequest) -> HttpResponse:
-    return render(request, "landing_page/index.html")
+class LandingPageView(TemplateView):
+    template_name = "landing_page/index.html"
+
+    def get_context_data(self, **kwargs):
+        containers_data = [
+            ("1 Месяц", "300"),
+            ("6 Месяцев", "1 500"),
+            ("1 год", "3 000"),
+        ]
+        return {"containers_data": containers_data}

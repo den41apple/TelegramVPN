@@ -25,6 +25,12 @@
                     <li class="nav-item">
                         <a class="nav-link active" aria-current="page" href="#">FAQ</a>
                     </li>
+                    <li class="nav-item ">
+                        <a class="nav-link active" aria-current="page" href="#">Вход</a>
+                    </li>
+                    <li>
+                        <a class="nav-link active" aria-current="page" href="#">Регистрация</a>
+                    </li>
                 </ul>
             </div>
         </div>
@@ -32,5 +38,21 @@
     <div class="container">
         <h1>Landing Page</h1>
         <h3>Покупайте VPN</h3>
+        <h1>Тарифы</h1>
+        <div class="row">
+            {% for period, price in containers_data %}
+                <div class="col-md-3">
+
+                    <div class="card" style="width: 18rem;">
+                        <div class="card-body">
+                            <h5 class="card-title">{{ period }}</h5>
+                            <p class="card-text">{{ price }} ₽</p>
+                            <a href="#" class="btn btn-success">Оформить</a>
+                        </div>
+                    </div>
+
+                </div>
+            {% endfor %}
+        </div>
     </div>
 {% endblock %}
