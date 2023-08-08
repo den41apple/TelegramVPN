@@ -5,6 +5,7 @@ from . import settings
 urlpatterns = [
     path("admin/", admin.site.urls),
     path("", include("landing_page.urls")),
+    path("auth/", include("site_auth.urls")),
 ]
 
 if settings.DEBUG:
