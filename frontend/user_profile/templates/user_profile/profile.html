@@ -5,15 +5,14 @@
 {% endblock %}
 
 {% block body %}
-    <h1>User info:</h1>
     {% if user.is_authenticated %}
-        <p>Username: {{ user.username }}</p>
         {# Таблица с устройствами #}
         <h3>Устройства:</h3>
         <table class="table">
             <thead>
             <tr>
                 <th scope="col">Name</th>
+                <th scope="col">Description</th>
                 <th scope="col">Remote ip</th>
                 <th scope="col">Latest Handshake</th>
                 <th scope="col">Public key</th>
@@ -27,6 +26,7 @@
                     <tr>
                         {# <th scope="row">1</th>#}
                         <td>{{ device.name }} </td>
+                        <td>{{ device.description }} </td>
                         <td>{{ device.remote_ip }}</td>
                         <td>{{ device.latest_handshake }}</td>
                         <td>{{ device.public_key }}</td>
@@ -37,10 +37,10 @@
                 </tbody>
                 </table>
             {% endif %}
-         <a class="btn btn-outline-success" href="#" >Добавить устройство</a>
+         <a class="btn btn-outline-success" href="{% url 'user_profile:add_device' %}" >Добавить устройство</a>
 
     {% else %}
-        <h2>Anonymous user</h2>
+        <h2>Для просмотра профиля необходимо войти в аккаунт</h2>
     {% endif %}
 
 {% endblock %}
