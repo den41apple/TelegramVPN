@@ -35,6 +35,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "site_auth.apps.SiteAuthConfig",
     "landing_page.apps.LandingPageConfig",
+    "user_profile.apps.UserProfileConfig"
 ]
 
 if DEBUG:

@@ -1,7 +1,8 @@
 from django.urls import path
 from django.views.generic import TemplateView
 
-from .views import LoginView, LogoutView, ProfileView
+from .views import LoginView, LogoutView
+from user_profile.views import ProfileView
 
 app_name = "site_auth"
 
