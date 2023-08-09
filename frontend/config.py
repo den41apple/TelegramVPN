@@ -8,3 +8,5 @@ load_dotenv()
 env = Env()
 
 DJ_SECRET_KEY = env.str("DJ_SECRET_KEY")
+
+

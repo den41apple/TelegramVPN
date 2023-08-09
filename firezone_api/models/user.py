@@ -3,7 +3,7 @@
 """
 from pydantic import BaseModel, validator
 
-from telegram_bot.firezone_api.models.string_datetime_view import StringDatetime
+from firezone_api.models.string_datetime_view import StringDatetime
 
 
 class User(BaseModel):
@@ -18,11 +18,15 @@ class User(BaseModel):
     class Config:
         arbitrary_types_allowed = True
 
-    @validator("updated_at", "disabled_at",
-               "inserted_at", "last_signed_in_at",
-               pre=True)
+    @validator(
+        "updated_at",
+        "disabled_at",
+        "inserted_at",
+        "last_signed_in_at",
+        pre=True,
+    )
     def parse_date(value: str | None) -> StringDatetime | None:
         if value is None:
             return
-        value = value.split('.')[0]
+        value = value.split(".")[0]
         return StringDatetime(value)

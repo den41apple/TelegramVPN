@@ -1,15 +1,46 @@
 {% extends "base.html" %}
 
 {% block title %}
-	User profile
+    User profile
 {% endblock %}
 
 {% block body %}
     <h1>User info:</h1>
     {% if user.is_authenticated %}
-    	<p>Username: {{ user.username }}</p>
-        {% else %}
-        <h2>Anonimous user</h2>
+        <p>Username: {{ user.username }}</p>
+        {# Таблица с устройствами #}
+        <h3>Устройства:</h3>
+        <table class="table">
+            <thead>
+            <tr>
+                <th scope="col">Name</th>
+                <th scope="col">Remote ip</th>
+                <th scope="col">Latest Handshake</th>
+                <th scope="col">Public key</th>
+                <th scope="col">Created</th>
+                <th scope="col">Updated</th>
+            </tr>
+            </thead>
+            <tbody>
+            {% if devices %}
+                {% for device in devices %}
+                    <tr>
+                        {# <th scope="row">1</th>#}
+                        <td>{{ device.name }} </td>
+                        <td>{{ device.remote_ip }}</td>
+                        <td>{{ device.latest_handshake }}</td>
+                        <td>{{ device.public_key }}</td>
+                        <td>{{ device.inserted_at }}</td>
+                        <td>{{ device.updated_at }}</td>
+                    </tr>
+                {% endfor %}
+                </tbody>
+                </table>
+            {% endif %}
+         <a class="btn btn-outline-success" href="#" >Добавить устройство</a>
+
+    {% else %}
+        <h2>Anonymous user</h2>
     {% endif %}
-	<h1>{{ user.username }}</h1>
+
 {% endblock %}
