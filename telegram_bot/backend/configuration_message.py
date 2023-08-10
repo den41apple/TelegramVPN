@@ -20,9 +20,7 @@ def prepare_configuration_qr_and_message(
     ----------
         (qr_код, конфигурационный файл)
     """
-    config_file, config_string = prepare_config_file(
-        device=device, file_name=file_name
-    )
+    config_file, config_string = prepare_config_file(device=device, file_name=file_name)
     qr_generator.generate(config_string)
     qr_file = BytesIO()
     qr_generator.save(qr_file)
@@ -30,9 +28,7 @@ def prepare_configuration_qr_and_message(
     return config_file, qr_file
 
 
-def prepare_config_file(
-    device: Device, file_name: str
-) -> tuple[StringIO, str]:
+def prepare_config_file(device: Device, file_name: str) -> tuple[StringIO, str]:
     """
     Подготавливает строку конфигурационного файла
     """

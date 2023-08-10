@@ -1,14 +1,20 @@
 import asyncio
 import warnings
+import base64
 
-from django.http import HttpResponseRedirect
+from django.http import HttpResponseRedirect, HttpRequest, HttpResponse
 from django.shortcuts import render
 from django.urls import reverse_lazy
-from django.views.generic import TemplateView, FormView, DeleteView
+from django.views.generic import TemplateView, FormView, View
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from firezone_api import FirezoneApi
+from firezone_api.models import Device
 from .forms import DeviceForm
+from telegram_bot.backend.configuration_message import (
+    prepare_config_file,
+    prepare_configuration_qr_and_message,
+)
 
 fz_api = FirezoneApi()
 user_id = "6a00408c-f3bb-41fa-a37e-4f25c76ecb26"  # Тестовый юзер
@@ -34,11 +40,12 @@ class AddDeviceView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         name = form.cleaned_data["name"]
         description = form.cleaned_data["description"]
-        asyncio.run(
+        device = asyncio.run(
             fz_api.create_device(
                 user_id=user_id, device_name=name, description=description
             )
         )
+        self.request.session['device'] = device.dict()
         return super().form_valid(form)
 
 
@@ -48,9 +55,32 @@ class NewDeviceInfoView(LoginRequiredMixin, TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-
+        device = self.request.session['device']
+        device = Device(**device)
+        # Генерация
+        config_file_io, qr_image_file = prepare_configuration_qr_and_message(device=device)
+        config_string = config_file_io.read()
+        qr_bytes = qr_image_file.read()
+        image_str = base64.b64encode(qr_bytes)
+        image_b64 = image_str.decode("utf-8")
+        context.update({"config_string": config_string,
+                        "device": device.dict(),
+                        "image_b64": image_b64})
+        self.request.session["config_string"] = config_string
         return context
+
+class DownloadConfigDeviceView(LoginRequiredMixin, TemplateView):
+    """Загрузка файла конфигурации"""
+
+    def get(self, request: HttpRequest, *args, **kwargs) -> HttpResponse:
+        context = self.get_context_data(**kwargs)
+        response = HttpResponse(
+            content_type="text/csv",
+            headers={"Content-Disposition": 'attachment; filename="configuration.conf"'},
+        )
+        config_string = self.request.session["config_string"]
+        response.write(config_string)
+        return response
 
 class ConfirmDeleteDeviceView(LoginRequiredMixin, TemplateView):
     template_name = "user_profile/device_confirm_delete.html"

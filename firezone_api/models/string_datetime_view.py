@@ -1,7 +1,7 @@
 from datetime import datetime
 
 
-class StringDatetime:
+class StringDatetime(str):
     """
     Удобное строковое представление даты и времени
     """

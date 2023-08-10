@@ -7,6 +7,7 @@ from .views import (
     ConfirmDeleteDeviceView,
     DeleteDeviceView,
     NewDeviceInfoView,
+DownloadConfigDeviceView,
 )
 
 app_name = "user_profile"
@@ -18,6 +19,11 @@ urlpatterns = [
         "new_device_info/",
         NewDeviceInfoView.as_view(),
         name="new_device_info",
+    ),
+    path(
+        "download_config/",
+        DownloadConfigDeviceView.as_view(),
+        name="download_config",
     ),
     path(
         "<device_id>/confitm-delete/",
