@@ -11,9 +11,7 @@ from firezone_api.generators import KeysGenerator
 
 
 class FirezoneApi:
-    def __init__(
-            self, host: str = config.FZ_HOST, token: str = config.FZ_TOKEN
-    ):
+    def __init__(self, host: str = config.FZ_HOST, token: str = config.FZ_TOKEN):
         self._host = host
         self._token = token
         self._headers = {
@@ -34,6 +32,26 @@ class FirezoneApi:
                 users: list[User] = [User(**user) for user in users]
                 return users
 
+    async def create_user(
+        self, email: str, role: str = None, password: str = None
+    ) -> User:
+        """
+        Создает пользователя
+        """
+        url = f"{self._host}/v0/users"
+        params = {"user": {"email": email}}
+        if role:
+            params.update(role=role)
+        if password:
+            params.update(password=password,
+                          password_confirmation=password)
+        async with aiohttp.ClientSession() as session:
+            async with session.post(url, headers=self._headers,
+                                    data=json.dumps(params)) as response:
+                response_data: dict = await response.json()
+                user: dict = response_data["data"]
+                return User(**user)
+
     async def get_devices(self, user_id: str = None) -> list[Device]:
         """
         Получает список устройств
@@ -50,9 +68,8 @@ class FirezoneApi:
                 devices: list[Device] = [Device(**device) for device in devices]
                 if user_id is not None:
                     # Фильтрация по user_id
-                    devices: list[Device] = list(
-                        filter(lambda x: x.user_id == user_id, devices)
-                    )
+                    devices = filter(lambda x: x.user_id == user_id, devices)
+                    devices: list[Device] = list(devices)
                 return devices
 
     async def get_device(self, device_id: str = None) -> Device:
@@ -72,7 +89,7 @@ class FirezoneApi:
                 return device
 
     async def create_device(
-            self, user_id: str, device_name: str, description: str = None
+        self, user_id: str, device_name: str, description: str = None
     ) -> Device:
         """
         Создает конфигурацию устройства
@@ -90,13 +107,11 @@ class FirezoneApi:
         }
         async with aiohttp.ClientSession() as session:
             async with session.post(
-                    url, headers=self._headers, data=json.dumps(params)
+                url, headers=self._headers, data=json.dumps(params)
             ) as response:
                 response_data: dict = await response.json()
                 device: dict = response_data["data"]
-                return Device(
-                    **device, private_key=self._keys_generator.private_key
-                )
+                return Device(**device, private_key=self._keys_generator.private_key)
 
     async def delete_device(self, device_id: str) -> bool:
         """
@@ -106,7 +121,9 @@ class FirezoneApi:
         async with aiohttp.ClientSession() as session:
             async with session.delete(url, headers=self._headers) as response:
                 if not response.ok:
-                    raise Exception(f'Ошибка удаления устройства id :: "{device_id}"\n'
-                                    f"STATUS CODE :: {response.status}\n"
-                                    f"Ответ от сервера: {await response.text()}")
+                    raise Exception(
+                        f'Ошибка удаления устройства id :: "{device_id}"\n'
+                        f"STATUS CODE :: {response.status}\n"
+                        f"Ответ от сервера: {await response.text()}"
+                    )
                 return response.ok
