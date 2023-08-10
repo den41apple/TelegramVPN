@@ -35,12 +35,15 @@
                 </li>
                 {% if user.is_authenticated %}
                     <li class="nav-item" aria-current="page" >
-                        <p class="nav-link active">Username: {{ user.username }}</p>
+                        <p class="nav-link active fw-bold ">{{ user.username }}</p>
                     </li>
                     <li class="nav-item">
                     <a class="btn btn-outline-secondary mx-lg-4" href="{% url 'site_auth:logout' %}" >Logout</a>
                 {% else %}
-                    <a class="btn btn-outline-primary mx-lg-4" href="{% url 'site_auth:login' %}" >
+                        <li class="nav-item" aria-current="page" >
+                        <p class="nav-link active fw-bold "></p>
+                    </li>
+                    <a class="btn btn-outline-primary mx-lg-4 " href="{% url 'site_auth:login' %}" >
                         Вход / Регистрация
                     </a>
                     </li>

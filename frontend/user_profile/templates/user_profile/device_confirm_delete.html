@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+
+{% block title %}
+    Удалить устройство
+{% endblock %}
+
+{% block body %}
+
+    <div class="card border-danger mb-3" style="max-width: 18rem;">
+        <div class="card-header">Удалить устройство?</div>
+        <div class="card-body text-danger">
+            <h5 class="card-title">{{ device.name }}</h5>
+            <p class="card-text">{{ device.description }}</p>
+            <div>
+                <a class="btn btn-outline-secondary float-start" href="{% url 'user_profile:profile' %}">Назад</a>
+                <form method="post">
+                    <a class="btn btn-outline-danger float-end" href="{% url 'user_profile:delete_device' device_id%}">Удалить</a>
+                </form>
+            </div>
+        </div>
+    </div>
+
+{% endblock %}
