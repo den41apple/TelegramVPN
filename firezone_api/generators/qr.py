@@ -20,9 +20,8 @@ class QrCodeGenerator:
         embeded_image_path = current_dir / "img" / 'logo2.png'
         self.img = qr.make_image(image_factory=StyledPilImage,
                                  module_drawer=CircleModuleDrawer(),
-                                 # color_mask=RadialGradiantColorMask(),
-                                 embeded_image_path=str(embeded_image_path)
-                                 )
+                                 # color_mask=RadialGradiantColorMask(),  # градиент долго отрабатывает
+                                 embeded_image_path=str(embeded_image_path))
 
     def save(self, stream: BytesIO = None):
         if stream is None:

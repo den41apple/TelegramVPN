@@ -6,8 +6,9 @@
 {% block body %}
 
     <!-- Pills content -->
-    <div class="tab-content">
-        <p class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
+    <div class="tab-content card w-50">
+        <div class="my-3 mx-5">
+            <p class="tab-pane fade show active" id="pills-login" role="tabpanel" aria-labelledby="tab-login">
             <form method="post">
 
                 {% csrf_token %}
@@ -20,59 +21,10 @@
 
                 {{ form.as_p }}
                 <!-- Submit button -->
-                <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
-
-                <!-- Register buttons -->
-                <div class="text-center">
-                    <p>Not a member? <a href="#">Register</a></p>
+                <div class="row-cols-6">
+                    <button type="submit" class="btn btn-primary btn-block mb-4">Sign in</button>
+                    <a class="mx-2" href="{% url 'site_auth:register' %}">Регистрация</a>
                 </div>
-            </form>
-        </div>
-        <div class="tab-pane fade" id="pills-register" role="tabpanel" aria-labelledby="tab-register">
-            <form>
-
-
-                <!-- Name input -->
-                <div class="form-outline mb-4">
-                    <input type="text" id="registerName" class="form-control"/>
-                    <label class="form-label" for="registerName">Name</label>
-                </div>
-
-                <!-- Username input -->
-                <div class="form-outline mb-4">
-                    <input type="text" id="registerUsername" class="form-control"/>
-                    <label class="form-label" for="registerUsername">Username</label>
-                </div>
-
-                <!-- Email input -->
-                <div class="form-outline mb-4">
-                    <input type="email" id="registerEmail" class="form-control"/>
-                    <label class="form-label" for="registerEmail">Email</label>
-                </div>
-
-                <!-- Password input -->
-                <div class="form-outline mb-4">
-                    <input type="password" id="registerPassword" class="form-control"/>
-                    <label class="form-label" for="registerPassword">Password</label>
-                </div>
-
-                <!-- Repeat Password input -->
-                <div class="form-outline mb-4">
-                    <input type="password" id="registerRepeatPassword" class="form-control"/>
-                    <label class="form-label" for="registerRepeatPassword">Repeat password</label>
-                </div>
-
-                <!-- Checkbox -->
-                <div class="form-check d-flex justify-content-center mb-4">
-                    <input class="form-check-input me-2" type="checkbox" value="" id="registerCheck" checked
-                           aria-describedby="registerCheckHelpText"/>
-                    <label class="form-check-label" for="registerCheck">
-                        I have read and agree to the terms
-                    </label>
-                </div>
-
-                <!-- Submit button -->
-                <button type="submit" class="btn btn-primary btn-block mb-3">Sign in</button>
             </form>
         </div>
     </div>
