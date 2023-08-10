@@ -35,7 +35,7 @@ class RegisterView(CreateView):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
         telegram_chat_id = form.cleaned_data.get("telegram_chat_id")
-        fz_user = asyncio.run(fz_api.create_user(email=f"username@django.com",
+        fz_user = asyncio.run(fz_api.create_user(email=f"{username}@django.com",
                                                  password=password))
         my_user = User(user=user, telegram_chat_id=telegram_chat_id, firezone_id=fz_user.id)
         my_user.save()

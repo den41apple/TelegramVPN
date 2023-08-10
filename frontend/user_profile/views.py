@@ -11,6 +11,7 @@ from django.contrib.auth.mixins import LoginRequiredMixin
 from firezone_api import FirezoneApi
 from firezone_api.models import Device
 from .forms import DeviceForm
+from site_auth.models import User
 from telegram_bot.backend.configuration_message import (
     prepare_config_file,
     prepare_configuration_qr_and_message,
