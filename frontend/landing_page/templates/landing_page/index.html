@@ -5,25 +5,30 @@
 {% endblock %}
 
 {% block body %}
-
-
-        <h1>Landing Page</h1>
-        <h3>Покупайте VPN</h3>
-        <h1>Тарифы</h1>
-        <div class="row">
-            {% for period, price in containers_data %}
-                <div class="col-md-3">
-
-                    <div class="card" style="width: 18rem;">
-                        <div class="card-body">
-                            <h5 class="card-title">{{ period }}</h5>
-                            <p class="card-text">{{ price }} ₽</p>
-                            <a href="#" class="btn btn-success">Оформить</a>
-                        </div>
+    <section class="vh-100">
+    <div class="container hv-75 ">
+        <div class="row mt-5 d-flex  justify-content-center align-items-center">
+            {% for product in containers_data %}
+                <div class="col card card-shadow {{ product.text_class }} {{ product.bg_class }} mb-3 mx-3 p-0"
+                     style="max-width: 25rem;">
+                    <div class="card-header">{{ product.name }}
                     </div>
-
+                    <div class="card-body">
+                        <h5 class="card-title">{{ product.period }}</h5>
+                        <p class="card-text">
+                            {{ product.description |linebreaksbr }}
+                        </p>
+                    </div>
+                    <div class="card-footer">
+                        <a href="#" class="btn btn-success  ">Попробовать бесплатно</a>
+                        <small class="{{ product.text_class }} fw-bold h4 float-end me-2">{{ product.price}}</small>
+                    </div>
                 </div>
+
             {% endfor %}
+                </div>
         </div>
+    </div>
+    </section>
 
 {% endblock %}
