@@ -3,7 +3,6 @@ import config
 import sys
 
 
-
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
 PYTHON_PROJECT_DIR = BASE_DIR.parent
@@ -35,7 +34,7 @@ INSTALLED_APPS = [
     "django.contrib.staticfiles",
     "site_auth.apps.SiteAuthConfig",
     "landing_page.apps.LandingPageConfig",
-    "user_profile.apps.UserProfileConfig"
+    "user_profile.apps.UserProfileConfig",
 ]
 
 if DEBUG:
@@ -65,6 +64,7 @@ TEMPLATES = [
                 "django.template.context_processors.request",
                 "django.contrib.auth.context_processors.auth",
                 "django.contrib.messages.context_processors.messages",
+                "vpn.context.add_context",
             ],
         },
     },
@@ -99,6 +99,7 @@ AUTH_PASSWORD_VALIDATORS = [
         "NAME": "django.contrib.auth.password_validation.NumericPasswordValidator",
     },
 ]
+
 
 # Internationalization
 # https://docs.djangoproject.com/en/4.2/topics/i18n/

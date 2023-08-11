@@ -15,6 +15,7 @@ from .models import User
 
 fz_api = FirezoneApi()
 
+
 class LoginView(LoginViewGeneric):
     form_class = AuthenticationForm
     template_name = "site_auth/login.html"
@@ -23,6 +24,7 @@ class LoginView(LoginViewGeneric):
 
 class LogoutView(LogoutViewGeneric):
     next_page = reverse_lazy("landing_page:index")
+
 
 class RegisterView(CreateView):
     form_class = UserCreationForm
@@ -35,13 +37,9 @@ class RegisterView(CreateView):
         username = form.cleaned_data.get("username")
         password = form.cleaned_data.get("password1")
         telegram_chat_id = form.cleaned_data.get("telegram_chat_id")
-        fz_user = asyncio.run(fz_api.create_user(email=f"{username}@django.com",
-                                                 password=password))
+        fz_user = asyncio.run(fz_api.create_user(email=f"{username}@django.com", password=password))
         my_user = User(user=user, telegram_chat_id=telegram_chat_id, firezone_id=fz_user.id)
         my_user.save()
-        authenticate(self.request,
-                     username=username,
-                     password=password)
+        authenticate(self.request, username=username, password=password)
         login(self.request, user=user)
         return response
-

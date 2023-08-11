@@ -24,3 +24,4 @@ FZ_TOKEN = env.str("FZ_TOKEN")
 #                                                     DJANGO                                                           #
 ########################################################################################################################
 DJ_SECRET_KEY = env.str("DJ_SECRET_KEY")
+DJ_TELEGRAM_BOT_URL = env.str("DJ_TELEGRAM_BOT_URL")
