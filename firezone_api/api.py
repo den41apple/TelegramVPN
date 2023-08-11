@@ -5,7 +5,7 @@
 import aiohttp
 import json
 
-from telegram_bot import config
+import config
 from firezone_api.models import User, Device
 from firezone_api.generators import KeysGenerator
 
@@ -32,9 +32,7 @@ class FirezoneApi:
                 users: list[User] = [User(**user) for user in users]
                 return users
 
-    async def create_user(
-        self, email: str, role: str = None, password: str = None
-    ) -> User:
+    async def create_user(self, email: str, role: str = None, password: str = None) -> User:
         """
         Создает пользователя
         """
@@ -43,11 +41,9 @@ class FirezoneApi:
         if role:
             params.update(role=role)
         if password:
-            params.update(password=password,
-                          password_confirmation=password)
+            params.update(password=password, password_confirmation=password)
         async with aiohttp.ClientSession() as session:
-            async with session.post(url, headers=self._headers,
-                                    data=json.dumps(params)) as response:
+            async with session.post(url, headers=self._headers, data=json.dumps(params)) as response:
                 response_data: dict = await response.json()
                 user: dict = response_data["data"]
                 return User(**user)
@@ -88,9 +84,7 @@ class FirezoneApi:
                 device: Device = Device(**device)
                 return device
 
-    async def create_device(
-        self, user_id: str, device_name: str, description: str = None
-    ) -> Device:
+    async def create_device(self, user_id: str, device_name: str, description: str = None) -> Device:
         """
         Создает конфигурацию устройства
         """
@@ -106,9 +100,7 @@ class FirezoneApi:
             }
         }
         async with aiohttp.ClientSession() as session:
-            async with session.post(
-                url, headers=self._headers, data=json.dumps(params)
-            ) as response:
+            async with session.post(url, headers=self._headers, data=json.dumps(params)) as response:
                 response_data: dict = await response.json()
                 device: dict = response_data["data"]
                 return Device(**device, private_key=self._keys_generator.private_key)
