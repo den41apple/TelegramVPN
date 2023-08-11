@@ -51,7 +51,7 @@
                         </a>
                     </div>
                     <div class="col">
-                        <a class="btn btn-outline-secondary mx-lg-4" style="width: 5rem;"
+                        <a class="btn btn-outline-danger mx-lg-4" style="width: 5rem;"
                            href="{% url 'site_auth:logout' %}">Выйти</a>
                     </div>
                 {% else %}
@@ -59,9 +59,15 @@
                         <p class="nav-link active fw-bold "></p>
                     </div>
                     <div class="col">
-                        <a class="btn btn-outline-primary mx-lg-4" style="width: 11rem;"
+                        <a class="btn btn-outline-primary"
                            href="{% url 'site_auth:login' %}">
-                            Вход / Регистрация
+                            Вход
+                        </a>
+                    </div>
+                    <div class="col">
+                        <a class="btn btn-primary"
+                           href="{% url 'site_auth:register' %}">
+                            Регистрация
                         </a>
                     </div>
                     </div>
