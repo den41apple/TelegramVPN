@@ -1,14 +1,17 @@
+{% load static %}
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+<link rel="shortcut icon" type="image/svg" href="{% static 'img/navbar-logo.svg' %}"/>
     <title>
         {% block title %}
 
         {% endblock %}</title>
-    {% load static %}
+
     <link rel="stylesheet" href="{% static "css/bootstrap.min.css" %}">
+    <link rel="stylesheet" href="{% static "css/my_styles.css" %}">
     <script src="{% static "js/bootstrap.bundle.min.js" %}"></script>
 </head>
 
@@ -32,23 +35,29 @@
                 </li>
                 <li class="nav-item">
                     <a class="nav-link active" aria-current="page" href="#">FAQ</a>
-                </li>
-                {% if user.is_authenticated %}
-                    <li class="nav-item" aria-current="page" >
-                        <a class="nav-link active fw-bold" href="{% url 'user_profile:profile' %}">{{ user.username }}</a>
-                    </li>
-                    <li class="nav-item">
-                    <a class="btn btn-outline-secondary mx-lg-4" href="{% url 'site_auth:logout' %}" >Logout</a>
+            </ul>
+                <div class="row">
+                    {% if user.is_authenticated %}
+                        <div class="col">
+                        <a class="nav-link active fw-bold" href="{% url 'user_profile:profile' %}">
+                            Пользователь: <br>{{ user.username }}
+                        </a>
+                            </div>
+                    <div class="col">
+                    <a class="btn btn-outline-secondary mx-lg-4" style="width: 5rem;" href="{% url 'site_auth:logout' %}" >Выйти</a>
+                    </div>
                 {% else %}
-                        <li class="nav-item" aria-current="page" >
+                        <div class="col">
                         <p class="nav-link active fw-bold "></p>
-                    </li>
-                    <a class="btn btn-outline-primary mx-lg-4 " href="{% url 'site_auth:login' %}" >
+                        </div>
+                    <div class="col">
+                    <a class="btn btn-outline-primary mx-lg-4" style="width: 11rem;" href="{% url 'site_auth:login' %}" >
                         Вход / Регистрация
                     </a>
-                    </li>
+                    </div>
+                </div>
                 {% endif %}
-            </ul>
+
         </div>
     </div>
 </nav>

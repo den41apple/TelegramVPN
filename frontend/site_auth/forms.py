@@ -10,9 +10,7 @@ from .models import User
 
 
 class AuthenticationForm(AuthenticationFormGeneric):
-    username = UsernameField(
-        widget=forms.TextInput(attrs={"autofocus": True}), label="Имя пользователя"
-    )
+    username = UsernameField(widget=forms.TextInput(attrs={"autofocus": True}), label="Имя пользователя")
     password = forms.CharField(
         label="Пароль",
         strip=False,
