@@ -18,7 +18,6 @@ from telegram_bot.backend.configuration_message import (
 )
 
 fz_api = FirezoneApi()
-user_id = "6a00408c-f3bb-41fa-a37e-4f25c76ecb26"  # Тестовый юзер
 
 
 # Create your views here.
@@ -27,8 +26,10 @@ class ProfileView(TemplateView):
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-
-        devices = asyncio.run(fz_api.get_devices(user_id=user_id))
+        current_user = self.request.user
+        qs = User.objects.filter(user_id=current_user.pk).get()
+        fz_user_id = qs.firezone_id
+        devices = asyncio.run(fz_api.get_devices(user_id=fz_user_id))
         context.update({"devices": devices})
         return context
 
@@ -41,22 +42,22 @@ class AddDeviceView(LoginRequiredMixin, FormView):
     def form_valid(self, form):
         name = form.cleaned_data["name"]
         description = form.cleaned_data["description"]
-        device = asyncio.run(
-            fz_api.create_device(
-                user_id=user_id, device_name=name, description=description
-            )
-        )
-        self.request.session['device'] = device.dict()
+        current_user = self.request.user
+        qs = User.objects.filter(user_id=current_user.pk).get()
+        fz_user_id = qs.firezone_id
+        device = asyncio.run(fz_api.create_device(user_id=fz_user_id, device_name=name, description=description))
+        self.request.session["device"] = device.dict()
         return super().form_valid(form)
 
 
 class NewDeviceInfoView(LoginRequiredMixin, TemplateView):
     """Конфигурация для нового устройства"""
+
     template_name = "user_profile/created_device_information.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        device = self.request.session['device']
+        device = self.request.session["device"]
         device = Device(**device)
         # Генерация
         config_file_io, qr_image_file = prepare_configuration_qr_and_message(device=device)
@@ -64,11 +65,10 @@ class NewDeviceInfoView(LoginRequiredMixin, TemplateView):
         qr_bytes = qr_image_file.read()
         image_str = base64.b64encode(qr_bytes)
         image_b64 = image_str.decode("utf-8")
-        context.update({"config_string": config_string,
-                        "device": device.dict(),
-                        "image_b64": image_b64})
+        context.update({"config_string": config_string, "device": device.dict(), "image_b64": image_b64})
         self.request.session["config_string"] = config_string
         return context
+
 
 class DownloadConfigDeviceView(LoginRequiredMixin, TemplateView):
     """Загрузка файла конфигурации"""
@@ -83,12 +83,13 @@ class DownloadConfigDeviceView(LoginRequiredMixin, TemplateView):
         response.write(config_string)
         return response
 
+
 class ConfirmDeleteDeviceView(LoginRequiredMixin, TemplateView):
     template_name = "user_profile/device_confirm_delete.html"
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
-        device_id = kwargs.get('device_id')
+        device_id = kwargs.get("device_id")
         if device_id is None:
             raise Exception("Не был получен device_id для удаления устройства")
         device = asyncio.run(fz_api.get_device(device_id=device_id))
@@ -97,10 +98,9 @@ class ConfirmDeleteDeviceView(LoginRequiredMixin, TemplateView):
 
 
 class DeleteDeviceView(ProfileView):
-
     def get_context_data(self, **kwargs):
         # Удаление устройства
-        device_id = kwargs.get('device_id')
+        device_id = kwargs.get("device_id")
         if device_id is None:
             warnings.warn("Не был получен device_id для удаления устройства")
             return super().get_context_data(**kwargs)
