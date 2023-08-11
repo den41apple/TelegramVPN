@@ -5,31 +5,59 @@
 {% endblock %}
 
 {% block body %}
-    <h1 class="h-100 text-center">Тарифы</h1>
-    <section class="vh-100">
-    <div class="container hv-75 ">
-        <div class="row mt-5 d-flex  justify-content-center align-items-center">
-            {% for product in containers_data %}
-                <div class="col card card-shadow {{ product.text_class }} {{ product.bg_class }} mb-3 mx-3 p-0"
-                     style="max-width: 25rem;">
-                    <div class="card-header">{{ product.name }}
-                    </div>
-                    <div class="card-body">
-                        <h5 class="card-title">{{ product.period }}</h5>
-                        <p class="card-text">
-                            {{ product.description |linebreaksbr }}
-                        </p>
-                    </div>
-                    <div class="card-footer">
-                        <a href="#" class="btn btn-success">Попробовать бесплатно</a>
-                        <small class="{{ product.text_class }} fw-bold h4 float-end me-2">{{ product.price}}</small>
+    <div class="col mt-5">
+        <div class="row">
+            <h1 class="h-100 text-center" id="tariffs">Тарифы</h1>
+            <section class="h-100">
+                <div class="container hv-75">
+                    <div class="row mt-5 d-flex  justify-content-center align-items-center">
+                        {% for product in products_data %}
+                            <div class="col card card-shadow {{ product.text_class }} {{ product.bg_class }} mb-3 mx-3 p-0"
+                                 style="max-width: 25rem;">
+                                <div class="card-header">{{ product.name }}
+                                </div>
+                                <div class="card-body">
+                                    <h5 class="card-title">{{ product.period }}</h5>
+                                    <p class="card-text">
+                                        {{ product.description |linebreaksbr }}
+                                    </p>
+                                </div>
+                                <div class="card-footer">
+                                    <a href="#" class="btn btn-success">Попробовать бесплатно</a>
+                                    <small class="{{ product.text_class }} fw-bold h4 float-end me-2">{{ product.price }}</small>
+                                </div>
+                            </div>
+
+                        {% endfor %}
                     </div>
                 </div>
 
-            {% endfor %}
-                </div>
+            </section>
         </div>
-    </div>
-    </section>
 
+        <div class="row ">
+            <h1 class="h-100 text-center mt-5" id="faq">FAQ</h1>
+            <div class="accordion mt-2" id="accordionExample">
+                {% for faq in faq_data %}
+                    <div class="accordion" id="accordionPanelsStayOpenExample">
+                        <div class="accordion-item">
+                            <h2 class="accordion-header">
+                                <button class="accordion-button bg-secondary text-white collapsed" type="button"
+                                        data-bs-toggle="collapse"
+                                        data-bs-target="#panelsStayOpen-{{ faq.id }}" aria-expanded="true"
+                                        aria-controls="panelsStayOpen-{{ faq.id }}">
+                                    {{ faq.question }}
+                                </button>
+                            </h2>
+                            <div id="panelsStayOpen-{{ faq.id }}" class="accordion-collapse collapse">
+                                <div class="accordion-body bg-secondary-subtle">
+                                    {{ faq.answer |linebreaksbr }}
+                                </div>
+                            </div>
+                        </div>
+                    </div>
+
+                {% endfor %}
+            </div>
+        </div>
 {% endblock %}
