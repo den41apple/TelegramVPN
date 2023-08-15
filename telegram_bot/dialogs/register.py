@@ -5,11 +5,11 @@ import logging
 
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardButton
-from sqlalchemy.orm import Session
+
 
 from firezone_api import FirezoneApi
 from firezone_api.exceptions import UserAlreadyExistsError
-from telegram_bot.backend.db import User
+from telegram_bot.backend.db import User, async_session
 from telegram_bot.backend.password_generator import generate_password
 
 
@@ -50,9 +50,9 @@ class Register:
                         fz_is_admin=False,
                         fz_email=email,
                         fz_generated_password=password)
-            with Session(expire_on_commit=False) as session:
-                session.add(user)
-                session.commit()
+            async with async_session() as session:
+                async with session.begin():
+                    session.add(user)
         except Exception as err:
             await self._api.delete_user(user_id=fz_user.id)
             raise err
