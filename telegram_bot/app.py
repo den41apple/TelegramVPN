@@ -10,11 +10,11 @@ import config
 from telegram_bot.handlers import HandlersRegistrator
 
 
-WEBHOOK_HOST = config.WEBHOOK_TELEGRAM_HOST
-WEBHOOK_PATH = config.WEBHOOK_TELEGRAM_PATH
+WEBHOOK_HOST = config.TG_WEBHOOK_HOST
+WEBHOOK_PATH = config.TG_WEBHOOK_PATH
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
 
-bot = Bot(token=config.TELEGRAM_TOKEN)
+bot = Bot(token=config.TG_TOKEN)
 storage = MemoryStorage()
 dispatcher = Dispatcher(bot=bot, storage=storage)
 bot_app = HandlersRegistrator(bot=bot, dispatcher=dispatcher)

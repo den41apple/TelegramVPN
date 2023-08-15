@@ -13,9 +13,7 @@ class Devices:
     def __init__(self):
         self._api = FirezoneApi()
 
-    async def get_devices(
-        self, callback_query: CallbackQuery, state: FSMContext
-    ):
+    async def get_devices(self, callback_query: CallbackQuery, state: FSMContext):
         """
         Отображает список устройств
         """
@@ -25,9 +23,7 @@ class Devices:
             answer += f"Устройство №{i + 1}:"
             answer += f"\nИмя: {device.name}"
             if device.rx_bytes is not None:
-                recieved_value, recieved_descr = self._format_bytes(
-                    device.rx_bytes
-                )
+                recieved_value, recieved_descr = self._format_bytes(device.rx_bytes)
                 answer += f"\nПолучено: {recieved_value} {recieved_descr}"
             else:
                 answer += f"\nПолучено: -"
@@ -40,9 +36,7 @@ class Devices:
             answer += "\n\n"
         await callback_query.message.answer(answer)
 
-    async def get_name_for_new_device(
-        self, callback_query: CallbackQuery, state: FSMContext
-    ):
+    async def get_name_for_new_device(self, callback_query: CallbackQuery, state: FSMContext):
         """
         Запрашивает имя для нового устройства
         """
@@ -57,15 +51,9 @@ class Devices:
         """
         await state.set_state("*")
         wait_message = await message.answer("Создается конфигурация...")
-        firezone_user_id = (
-            "6a00408c-f3bb-41fa-a37e-4f25c76ecb26"  # тестовый юзер
-        )
-        device = await self._api.create_device(
-            user_id=firezone_user_id, device_name=message.text.strip()
-        )
-        config_file, qr_file = prepare_configuration_qr_and_message(
-            device=device
-        )
+        firezone_user_id = "6a00408c-f3bb-41fa-a37e-4f25c76ecb26"  # тестовый юзер
+        device = await self._api.create_device(user_id=firezone_user_id, device_name=message.text.strip())
+        config_file, qr_file = prepare_configuration_qr_and_message(device=device)
         message_text = "Ваш конфигурационный файл"
         await wait_message.delete()
         await message.answer_photo(photo=qr_file, caption=message_text)

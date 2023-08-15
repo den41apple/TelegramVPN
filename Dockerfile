@@ -7,4 +7,4 @@ COPY poetry.lock pyproject.toml ./
 
 RUN poetry install --no-ansi --only main
 
-CMD ["python", "app/run_telegram_app.py"]
+ENTRYPOINT ["bash", "app/docker-entrypoint.sh"]
