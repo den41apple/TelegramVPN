@@ -17,3 +17,5 @@ async def get_user_by_chat_id(chat_id: int) -> User | None:
         if user is not None:
             user = user[0]
     return user
+
+

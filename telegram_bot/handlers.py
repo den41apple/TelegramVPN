@@ -33,9 +33,12 @@ class HandlersRegistrator:
 
         #       УСТРОЙСТВА
         # Показ устройств
-        dp.register_callback_query_handler(self.devices.get_devices, text_contains='get_devices', state='*')
+        dp.register_callback_query_handler(self.devices.get_devices, text_contains=Devices.device_list_prefix, state='*')
         # Создать новую конфигурацию, ввести имя
         dp.register_callback_query_handler(self.devices.get_name_for_new_device,
                                            text_contains='create_device', state='*')
-        # Создать новую кофигурацию
+        # Создать новую конфигурацию
         dp.register_message_handler(self.devices.create_new_device, state='enter_device_name')
+        # Информация об устройстве
+        dp.register_callback_query_handler(self.devices.device_info,
+                                           text_contains=Devices.device_info_prefix, state='*')

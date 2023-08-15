@@ -12,6 +12,8 @@ from telegram_bot.backend.db.actions import get_user_by_chat_id
 
 
 class Devices:
+    device_info_prefix = "device_info_"
+    device_list_prefix = "get_devices"
 
     def __init__(self):
         self._api = FirezoneApi()
@@ -44,13 +46,14 @@ class Devices:
         if len(devices) != 0:
             answer += "Посмотреть детали:"
         keyboard = InlineKeyboardMarkup()
-        self._fill_buttons_for_list_devices(devices=devices, keyboard=keyboard, prefix="device_info_")
+        self._fill_buttons_for_list_devices(devices=devices, keyboard=keyboard)
         keyboard.add(InlineKeyboardButton("Добавить устройство",
                                           callback_data="/create_device"))
         await callback_query.message.answer(answer, reply_markup=keyboard)
 
-    def _fill_buttons_for_list_devices(self, devices: list[Device], keyboard: InlineKeyboardMarkup, prefix: str):
+    def _fill_buttons_for_list_devices(self, devices: list[Device], keyboard: InlineKeyboardMarkup):
         """Создает клавиатуру для списка устройств"""
+        prefix = self.__class__.device_info_prefix
         row = []
         devices_number_in_row = 2
         for i, device in enumerate(devices):
@@ -95,7 +98,29 @@ class Devices:
         """
         Получает детальную информацию по устройству
         """
-        pass
+        prefix = self.__class__.device_info_prefix
+        device_id = callback_query.data.replace(prefix, '')
+        device = await self._api.get_device(device_id=device_id)
+        if device.rx_bytes is not None:
+            recieved_value, recieved_descr = self._format_bytes(device.rx_bytes)
+            recieved_data = f"{recieved_value} {recieved_descr}"
+        else:
+            recieved_data = f"-"
+        if device.tx_bytes is not None:
+            sent_value, sent_descr = self._format_bytes(device.tx_bytes)
+            sent_data = f"{sent_value} {sent_descr}"
+        else:
+            sent_data = f""
+        text_message = (f'Имя устройства: "{device.name}"\n'
+                        f"Описание: {device.description}\n"
+                        f"Эндпоинт: {device.endpoint}\n"
+                        f"Получено: {recieved_data}\n"
+                        f"Отправлено: {sent_data}\n"
+                        f"DNS: {device.dns}\n")
+        keyboard = InlineKeyboardMarkup()
+        keyboard.add(InlineKeyboardButton("Назад",
+                                          callback_data=f"/{self.__class__.device_list_prefix}"))
+        await callback_query.message.answer(text_message, reply_markup=keyboard)
 
     @staticmethod
     def _format_bytes(size):
