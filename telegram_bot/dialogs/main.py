@@ -19,18 +19,23 @@ class Main:
         keyboard = InlineKeyboardMarkup()
         keyboard.add(
             InlineKeyboardButton(
-                "Список пользователей", callback_data="/get_users"
+                "Регистрация пользователя", callback_data="/registration_options"
             )
         )
-        keyboard.add(
-            InlineKeyboardButton(
-                "Список Устройств", callback_data="/get_devices"
-            )
-        )
-        keyboard.add(
-            InlineKeyboardButton(
-                "Создать новую конфигурацию устройства",
-                callback_data="/create_device",
-            )
-        )
+        # keyboard.add(
+        #     InlineKeyboardButton(
+        #         "Список пользователей", callback_data="/get_users"
+        #     )
+        # )
+        # keyboard.add(
+        #     InlineKeyboardButton(
+        #         "Список Устройств", callback_data="/get_devices"
+        #     )
+        # )
+        # keyboard.add(
+        #     InlineKeyboardButton(
+        #         "Создать новую конфигурацию устройства",
+        #         callback_data="/create_device",
+        #     )
+        # )
         await message.answer("Привет", reply_markup=keyboard)

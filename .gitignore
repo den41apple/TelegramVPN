@@ -5,3 +5,4 @@ venv
 firezone-docker
 *.sqlite3
 /frontend/tempory/
+/telegram_bot/dialogs/create_user.py

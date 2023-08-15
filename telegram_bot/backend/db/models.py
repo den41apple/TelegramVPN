@@ -1,7 +1,9 @@
 """
 Модели БД
 """
-from sqlalchemy import Column, Integer, String, Boolean
+from datetime import datetime
+
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
 
 from .db import Base
 
@@ -16,4 +18,14 @@ class User(Base):
     fz_user_id = Column(String(100), unique=True)
     fz_is_admin = Column(Boolean, default=False)
     fz_email = Column(String(100))
-    # fz_generated_password = Column(String(100))  # Первоначально сгенерированный пароль при регистрации
+    fz_generated_password = Column(String(100))  # Первоначально сгенерированный пароль при регистрации
+    created_at = Column(DateTime, default=datetime.utcnow, server_default=func.now(), nullable=False)
+
+    def __str__(self):
+        return (f"User(id={self.id}, chat_id={self.chat_id}, first_name={self.first_name!r}, "
+                f"last_name={self.last_name!r}, username={self.username!r}, "
+                f"fz_user_id={self.fz_user_id!r}, fz_is_admin={self.fz_is_admin}, "
+                f"fz_email={self.fz_email!r}, fz_generated_password={self.fz_generated_password!r})")
+
+    def __repr__(self):
+        return str(self)

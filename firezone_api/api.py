@@ -8,6 +8,7 @@ import json
 import config
 from firezone_api.models import User, Device
 from firezone_api.generators import KeysGenerator
+from firezone_api.exceptions import CreateUserError, UserAlreadyExistsError
 
 
 class FirezoneApi:
@@ -44,9 +45,49 @@ class FirezoneApi:
             params.update(password=password, password_confirmation=password)
         async with aiohttp.ClientSession() as session:
             async with session.post(url, headers=self._headers, data=json.dumps(params)) as response:
-                response_data: dict = await response.json()
-                user: dict = response_data["data"]
-                return User(**user)
+                try:
+                    response_data: dict = await response.json()
+                    user: dict = response_data["data"]
+                    return User(**user)
+                except Exception as err:
+                    message = f"Ошибка создания пользователя :: {type(err)} {err}"
+                    try:
+                        # Если пользователь уже существует
+                        if response.status == 422:
+                            email_list = (await response.json())['errors']['email']
+                    except:
+                        pass
+                    else:
+                        if "has already been taken" in email_list:
+                            raise UserAlreadyExistsError
+                    try:
+                        message += (f"\nSTATUS CODE :: {response.status}\n"
+                                    f"Ответ от сервера: {await response.text()}")
+                    except:
+                        pass
+                    raise CreateUserError(message)
+
+    async def delete_user(self, user_id: str = None, email: str = None) -> bool:
+        """
+        Удаляет пользователя
+
+        Можно использовать email вместо user_id
+        """
+        if user_id is None and email is None:
+            raise ValueError('Необходимо использовать один из параметров "user_id" или "email"')
+        _id = user_id
+        if user_id is None:
+            _id = email
+        url = f"{self._host}/v0/users/{_id}"
+        async with aiohttp.ClientSession() as session:
+            async with session.delete(url, headers=self._headers) as response:
+                if not response.ok:
+                    raise Exception(
+                        f'Ошибка удаления пользователя id :: "{_id}"\n'
+                        f"STATUS CODE :: {response.status}\n"
+                        f"Ответ от сервера: {await response.text()}"
+                    )
+                return response.ok
 
     async def get_devices(self, user_id: str = None) -> list[Device]:
         """
