@@ -22,16 +22,20 @@ class HandlersRegistrator:
     def register_handlers(self, dp: Dispatcher):
         # Приветственное сообщение
         dp.register_message_handler(self.main.start, commands='start', state='*')
+        #       РЕГИСТРАЦИЯ
         # Сообщение инструкция Регистрация пользователей
         dp.register_callback_query_handler(self.register.registration_options, text_contains='registration_options', state='*')
         # Создание пользователя
         dp.register_callback_query_handler(self.register.register_user, text_contains='register_user', state='*')
-        # # Показ пользователей
+
+        # # Показ пользователей (АДМИН)
         # dp.register_callback_query_handler(self.users.get_users, text_contains='get_users', state='*')
-        # # Показ устройств
-        # dp.register_callback_query_handler(self.devices.get_devices, text_contains='get_devices', state='*')
-        # # Создать новую конфигурацию, ввести имя
-        # dp.register_callback_query_handler(self.devices.get_name_for_new_device,
-        #                                    text_contains='create_device', state='*')
-        # # Создать новую кофигурацию
-        # dp.register_message_handler(self.devices.create_new_device, state='enter_device_name')
+
+        #       УСТРОЙСТВА
+        # Показ устройств
+        dp.register_callback_query_handler(self.devices.get_devices, text_contains='get_devices', state='*')
+        # Создать новую конфигурацию, ввести имя
+        dp.register_callback_query_handler(self.devices.get_name_for_new_device,
+                                           text_contains='create_device', state='*')
+        # Создать новую кофигурацию
+        dp.register_message_handler(self.devices.create_new_device, state='enter_device_name')

@@ -3,13 +3,16 @@
 """
 from aiogram.dispatcher import FSMContext
 from aiogram.types import Message, CallbackQuery
+from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 
 from firezone_api import FirezoneApi
 from firezone_api.models import Device
 from telegram_bot.backend import prepare_configuration_qr_and_message
+from telegram_bot.backend.db.actions import get_user_by_chat_id
 
 
 class Devices:
+
     def __init__(self):
         self._api = FirezoneApi()
 
@@ -17,11 +20,15 @@ class Devices:
         """
         Отображает список устройств
         """
-        devices: list[Device] = await self._api.get_devices()
+        chat_id = callback_query.message.chat.id
+        fz_user = await get_user_by_chat_id(chat_id=chat_id)
+        fz_user_id = fz_user.fz_user_id
+        devices: list[Device] = await self._api.get_devices(user_id=fz_user_id)
         answer = ""
+        if len(devices) == 0:
+            answer = "Еще нет устройств"
         for i, device in enumerate(devices):
-            answer += f"Устройство №{i + 1}:"
-            answer += f"\nИмя: {device.name}"
+            answer += f'{i + 1}) "{device.name}":'
             if device.rx_bytes is not None:
                 recieved_value, recieved_descr = self._format_bytes(device.rx_bytes)
                 answer += f"\nПолучено: {recieved_value} {recieved_descr}"
@@ -34,7 +41,30 @@ class Devices:
                 answer += f"\nОтправлено: -"
             answer += f"\nПоследнее рукопожатие: {device.latest_handshake}"
             answer += "\n\n"
-        await callback_query.message.answer(answer)
+        if len(devices) != 0:
+            answer += "Посмотреть детали:"
+        keyboard = InlineKeyboardMarkup()
+        self._fill_buttons_for_list_devices(devices=devices, keyboard=keyboard, prefix="device_info_")
+        keyboard.add(InlineKeyboardButton("Добавить устройство",
+                                          callback_data="/create_device"))
+        await callback_query.message.answer(answer, reply_markup=keyboard)
+
+    def _fill_buttons_for_list_devices(self, devices: list[Device], keyboard: InlineKeyboardMarkup, prefix: str):
+        """Создает клавиатуру для списка устройств"""
+        row = []
+        devices_number_in_row = 2
+        for i, device in enumerate(devices):
+            if len(row) == devices_number_in_row:
+                if len(row) != 0:
+                    keyboard.add(*row)
+                row = []
+            button_text = f'{i + 1}) "{device.name}"'
+            row.append(InlineKeyboardButton(button_text,
+                                            callback_data=f"/{prefix}{device.id}"))
+
+        if len(row) != 0:
+            keyboard.add(*row)
+
 
     async def get_name_for_new_device(self, callback_query: CallbackQuery, state: FSMContext):
         """
@@ -51,13 +81,21 @@ class Devices:
         """
         await state.set_state("*")
         wait_message = await message.answer("Создается конфигурация...")
-        firezone_user_id = "6a00408c-f3bb-41fa-a37e-4f25c76ecb26"  # тестовый юзер
-        device = await self._api.create_device(user_id=firezone_user_id, device_name=message.text.strip())
+        chat_id = message.chat.id
+        fz_user = await get_user_by_chat_id(chat_id=chat_id)
+        fz_user_id = fz_user.fz_user_id
+        device = await self._api.create_device(user_id=fz_user_id, device_name=message.text.strip())
         config_file, qr_file = prepare_configuration_qr_and_message(device=device)
         message_text = "Ваш конфигурационный файл"
         await wait_message.delete()
         await message.answer_photo(photo=qr_file, caption=message_text)
         await message.answer_document(document=config_file)
+
+    async def device_info(self, callback_query: CallbackQuery, state: FSMContext):
+        """
+        Получает детальную информацию по устройству
+        """
+        pass
 
     @staticmethod
     def _format_bytes(size):
