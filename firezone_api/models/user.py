@@ -14,6 +14,7 @@ class User(BaseModel):
     disabled_at: StringDatetime | None
     inserted_at: StringDatetime | None
     last_signed_in_at: StringDatetime | None
+    last_signed_in_method: str | None
 
     class Config:
         arbitrary_types_allowed = True

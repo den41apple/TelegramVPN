@@ -1,6 +1,7 @@
 """
 Полезные инструменты
 """
+import re
 import random
 from typing import Any, Callable
 
@@ -44,3 +45,6 @@ def check_admin_access(func: Callable) -> Callable:
         return result
 
     return wrapper
+
+class RegexpPatterns:
+    id_pattern = re.compile(r"<id:([a-zA-Z0-9\-]+)>")

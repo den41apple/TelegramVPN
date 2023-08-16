@@ -92,7 +92,7 @@ class ConfirmDeleteDeviceView(LoginRequiredMixin, TemplateView):
         device_id = kwargs.get("device_id")
         if device_id is None:
             raise Exception("Не был получен device_id для удаления устройства")
-        device = asyncio.run(fz_api.get_device(device_id=device_id))
+        device = asyncio.run(fz_api.get_device_by_id(device_id=device_id))
         context.update({"device": device})
         return context
 

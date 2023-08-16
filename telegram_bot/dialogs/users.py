@@ -1,6 +1,8 @@
 """
 Работа с пользователями
 """
+import asyncio
+
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
@@ -8,10 +10,11 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from firezone_api import FirezoneApi
 from firezone_api.models import User
 from telegram_bot.backend.utils import check_admin_access
+from telegram_bot.dialogs.devices import Devices
 
 
 class Users:
-    user_info_prefix = "user_detail"
+    user_details_prefix = "user_details_"
 
     def __init__(self):
         self._api = FirezoneApi()
@@ -31,11 +34,12 @@ class Users:
             answer += "\n\n"
         keyboard = InlineKeyboardMarkup()
         self._fill_buttons_for_list_users(users=users, keyboard=keyboard)
+        keyboard.add(InlineKeyboardButton("Добавить пользователя", callback_data=f"/add_user_options"))
         await callback_query.message.answer(answer, reply_markup=keyboard)
 
     def _fill_buttons_for_list_users(self, users: list[User], keyboard: InlineKeyboardMarkup):
         """Создает клавиатуру для списка пользователей"""
-        prefix = self.__class__.user_info_prefix
+        prefix = self.__class__.user_details_prefix
         row = []
         devices_number_in_row = 2
         for i, user in enumerate(users):
@@ -49,3 +53,27 @@ class Users:
 
         if len(row) != 0:
             keyboard.add(*row)
+
+    @check_admin_access
+    async def user_details(self, callback_query: CallbackQuery, state: FSMContext):
+        """
+        Отображает информацию о пользователе
+        """
+        prefix = self.__class__.user_details_prefix
+        fz_user_id = callback_query.data.replace(f"/{prefix}", "")
+        user, devices = await asyncio.gather(
+            self._api.get_user_by_id(user_id=fz_user_id),
+            self._api.get_devices(user_id=fz_user_id))
+        # TODO: Отработать вариант с отсутствующим пользователем
+        message_text = (f"ID: {user.id}\n"
+                        f"Email: {user.email}\n"
+                        f"Роль: {user.role}\n"
+                        f"Последний вход: {user.last_signed_in_at}\n"
+                        f"Создан: {user.inserted_at}\n"
+                        f"Обновлен: {user.updated_at}\n"
+                        f"Кол-во устройств: {len(devices)}\n"
+                        f"Последний вход с помощью: {user.last_signed_in_method}\n")
+        keyboard = InlineKeyboardMarkup()
+        keyboard.add(InlineKeyboardButton(f"Устройства [{len(devices)} шт]",
+                                          callback_data=f"/{Devices.device_list_prefix}_<id:{fz_user_id}>"))
+        await callback_query.message.answer(message_text, reply_markup=keyboard)

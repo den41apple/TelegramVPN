@@ -18,6 +18,7 @@ class HandlersRegistrator:
         self.users = Users()
         # Устройства
         self.devices = Devices()
+
         # Регистрация обработчиков
         self.register_handlers(dispatcher)
 
@@ -35,7 +36,7 @@ class HandlersRegistrator:
         #       УСТРОЙСТВА
         # Показ устройств
         dp.register_callback_query_handler(
-            self.devices.get_devices, text_contains=Devices.device_list_prefix, state="*"
+            self.devices.list_devices, text_contains=Devices.device_list_prefix, state="*"
         )
         # Создать новую конфигурацию, ввести имя
         dp.register_callback_query_handler(
@@ -45,12 +46,25 @@ class HandlersRegistrator:
         dp.register_message_handler(self.devices.create_new_device, state="enter_device_name")
         # Информация об устройстве
         dp.register_callback_query_handler(
-            self.devices.device_info, text_contains=Devices.device_info_prefix, state="*"
+            self.devices.device_details, text_contains=Devices.device_details_prefix, state="*"
+        )
+        # Подтверждение удаления устройства
+        dp.register_callback_query_handler(
+            self.devices.device_confirm_delete, text_contains=Devices.device_confirm_delete_prefix, state="*"
+        )
+        # Удаление устройства
+        dp.register_callback_query_handler(
+            self.devices.delete_device, text_contains=Devices.delete_device_prefix, state="*"
         )
 
         #       АДМИНКА
         # Переход в режим админа
         dp.register_message_handler(self.admin.welcome, commands="admin", state="*")
+        # Список пользователей
         dp.register_callback_query_handler(
             self.users.list_users, text_contains="list_users", state="admin"
+        )
+        # Информация о пользователе
+        dp.register_callback_query_handler(
+            self.users.user_details, text_contains=Users.user_details_prefix, state="admin"
         )

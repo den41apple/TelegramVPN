@@ -33,6 +33,25 @@ class FirezoneApi:
                 users: list[User] = [User(**user) for user in users]
                 return users
 
+    async def get_user_by_id(self, user_id: str = None, email: str = None) -> User:
+        """
+        Получает информацию о пользователе
+
+        Можно использовать либо "email" либо "user_id"
+        """
+        if user_id is None and email is None:
+            raise ValueError('Необходимо использовать один из параметров "user_id" или "email"')
+        _id = user_id
+        if user_id is None:
+            _id = email
+        url = f"{self._host}/v0/users/{_id}"
+        async with aiohttp.ClientSession() as session:
+            async with session.get(url, headers=self._headers) as response:
+                response_data: dict = await response.json()
+                user: dict = response_data["data"]
+                user: User = User(**user)
+                return user
+
     async def create_user(self, email: str, role: str = None, password: str = None) -> User:
         """
         Создает пользователя
@@ -71,7 +90,7 @@ class FirezoneApi:
         """
         Удаляет пользователя
 
-        Можно использовать email вместо user_id
+        Можно использовать либо "email" либо "user_id"
         """
         if user_id is None and email is None:
             raise ValueError('Необходимо использовать один из параметров "user_id" или "email"')
@@ -109,7 +128,7 @@ class FirezoneApi:
                     devices: list[Device] = list(devices)
                 return devices
 
-    async def get_device(self, device_id: str = None) -> Device:
+    async def get_device_by_id(self, device_id: str = None) -> Device:
         """
         Получает информацию об устройстве
 

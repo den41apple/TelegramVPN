@@ -9,6 +9,7 @@ from firezone_api import FirezoneApi
 from telegram_bot.backend.utils import check_admin_access
 
 
+
 class Admin:
     def __init__(self):
         self._api = FirezoneApi()
@@ -18,7 +19,7 @@ class Admin:
         await state.set_state("admin")
         message_text = f"Приветствую в режиме администратора"
         keyboard = InlineKeyboardMarkup()
-        keyboard.add(InlineKeyboardButton("Список пользователей", callback_data="/list_users"))
+        keyboard.add(InlineKeyboardButton("Список пользователей", callback_data=f"/list_users"))
         await message.answer(message_text, reply_markup=keyboard)
 
 
