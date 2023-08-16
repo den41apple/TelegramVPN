@@ -10,7 +10,7 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardBut
 from firezone_api import FirezoneApi
 from firezone_api.exceptions import UserAlreadyExistsError
 from telegram_bot.backend.db import User, async_session
-from telegram_bot.backend.password_generator import generate_password
+from telegram_bot.backend.utils import generate_password
 
 
 class Register:
@@ -42,14 +42,16 @@ class Register:
             raise UserAlreadyExistsError(message_text)
         # Создание пользователя в БД Телеграм
         try:
-            user = User(chat_id=chat_id,
-                        first_name=tg_user.first_name,
-                        last_name=tg_user.last_name,
-                        username=tg_user.username,
-                        fz_user_id=fz_user.id,
-                        fz_is_admin=False,
-                        fz_email=email,
-                        fz_generated_password=password)
+            user = User(
+                chat_id=chat_id,
+                first_name=tg_user.first_name,
+                last_name=tg_user.last_name,
+                username=tg_user.username,
+                fz_user_id=fz_user.id,
+                fz_is_admin=False,
+                fz_email=email,
+                fz_generated_password=password,
+            )
             async with async_session() as session:
                 async with session.begin():
                     session.add(user)
@@ -58,4 +60,3 @@ class Register:
             raise err
         message_text = "Пользователь создан"
         await callback_query.message.answer(message_text)
-

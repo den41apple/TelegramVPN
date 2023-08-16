@@ -12,7 +12,7 @@ from telegram_bot.backend.db.actions import get_user_by_chat_id
 
 
 class Devices:
-    device_info_prefix = "device_info_"
+    device_info_prefix = "device_detail_"
     device_list_prefix = "get_devices"
 
     def __init__(self):

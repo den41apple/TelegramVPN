@@ -9,7 +9,6 @@ from aiogram.utils.executor import start_polling
 import config
 from telegram_bot.handlers import HandlersRegistrator
 
-
 WEBHOOK_HOST = config.TG_WEBHOOK_HOST
 WEBHOOK_PATH = config.TG_WEBHOOK_PATH
 WEBHOOK_URL = f"{WEBHOOK_HOST}{WEBHOOK_PATH}"
@@ -22,7 +21,7 @@ bot_app = HandlersRegistrator(bot=bot, dispatcher=dispatcher)
 
 async def on_startup(dp: Dispatcher):
     await bot.set_webhook(WEBHOOK_URL)
-    user_commands = [types.BotCommand("start", "Домой")]
+    user_commands = [types.BotCommand("start", "Домой"), types.BotCommand("admin", "Администрирование")]
     await dp.bot.set_my_commands(user_commands)
 
 
@@ -38,7 +37,7 @@ def main():
     start_polling(
         dispatcher=dispatcher,
         loop=None,
-        skip_updates=False,
+        skip_updates=True,
         reset_webhook=True,
         on_startup=on_startup,
         on_shutdown=None,
