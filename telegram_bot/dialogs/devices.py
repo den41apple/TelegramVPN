@@ -187,6 +187,6 @@ class Devices:
         fz_user_id = device.user_id
         await self._api.delete_device(device_id=device_id)
         await asyncio.gather(
-            callback_query.answer("Устройство удалено"),
+            callback_query.answer(f'Устройство "{device.name}" удалено'),
             self.list_devices(callback_query=callback_query, state=state, fz_user_id=fz_user_id),
         )
