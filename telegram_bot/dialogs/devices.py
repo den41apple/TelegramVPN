@@ -15,9 +15,9 @@ from telegram_bot.backend.utils import RegexpPatterns
 
 
 class Devices:
-    device_details_prefix = "device_details_"
-    device_confirm_delete_prefix = "device_confirm_delete_"
-    delete_device_prefix = "delete_device_"
+    device_details_prefix = "device_details"
+    device_confirm_delete_prefix = "device_confirm_delete"
+    delete_device_prefix = "delete_device"
     device_list_prefix = "list_devices"
 
     def __init__(self):
@@ -27,10 +27,12 @@ class Devices:
         """
         Отображает список устройств
         """
+        await state.set_state("*")
         chat_id = callback_query.message.chat.id
         # Определим передан ли конкретный Id пользователя
         callback_data = callback_query.data
         pattern = RegexpPatterns.id_pattern
+        fz_user_ids = []
         if fz_user_id is None:
             fz_user_ids = pattern.findall(callback_data)
             if len(fz_user_ids) == 0:
@@ -54,7 +56,10 @@ class Devices:
             answer += "Посмотреть детали:"
         keyboard = InlineKeyboardMarkup()
         self._fill_buttons_for_list_devices(devices=devices, keyboard=keyboard)
-        keyboard.add(InlineKeyboardButton("Добавить устройство", callback_data=f"/create_device_<id:{fz_user_id}>"))
+        callback_data = "/create_device"
+        if len(fz_user_ids) != 0:
+            callback_data += f"_<id:{fz_user_id}>"
+        keyboard.add(InlineKeyboardButton("Добавить устройство", callback_data=callback_data))
         await callback_query.message.answer(answer, reply_markup=keyboard)
 
     def _fill_buttons_for_list_devices(self, devices: list[Device], keyboard: InlineKeyboardMarkup):
@@ -124,7 +129,7 @@ class Devices:
         keyboard.add(InlineKeyboardButton("Назад", callback_data=f"/{self.__class__.device_list_prefix}"))
         keyboard.add(
             InlineKeyboardButton(
-                "Удалить", callback_data=f"/{self.__class__.device_confirm_delete_prefix}<id:{device_id}>"
+                "Удалить", callback_data=f"/{self.__class__.device_confirm_delete_prefix}_<id:{device_id}>"
             )
         )
         if "<edit>" in callback_data:
@@ -173,8 +178,8 @@ class Devices:
         device_details_prefix = self.__class__.device_details_prefix
         delete_device_prefix = self.__class__.delete_device_prefix
         keyboard.add(
-            InlineKeyboardButton("Да", callback_data=f"/{delete_device_prefix}<id:{device_id}>"),
-            InlineKeyboardButton("Отмена", callback_data=f"/{device_details_prefix}<id:{device_id}>_<edit>"),
+            InlineKeyboardButton("Да", callback_data=f"/{delete_device_prefix}_<id:{device_id}>"),
+            InlineKeyboardButton("Отмена", callback_data=f"/{device_details_prefix}_<id:{device_id}>_<edit>"),
         )
         await callback_query.message.edit_text(text_message, reply_markup=keyboard)
 

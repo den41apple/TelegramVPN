@@ -11,13 +11,15 @@ from aiogram.types import Message, CallbackQuery
 import config
 
 
-def generate_password(length: int = 20) -> str:
+def generate_password(length: int = 20, special_symbols: bool = True) -> str:
     """Генерирует случайный пароль"""
     digits = "1234567890"
     letters = "abcdefghijklmnopqrstuvwxyz"
     letters_upper = letters.upper()
     spec_symbols = "!@#$%^&*()-+~"
-    all_symbols = digits + letters + letters_upper + spec_symbols
+    all_symbols = digits + letters + letters_upper
+    if special_symbols is True:
+        all_symbols += spec_symbols
     password = [random.choice(all_symbols) for _ in range(length)]
     return "".join(password)
 

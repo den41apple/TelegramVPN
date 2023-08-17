@@ -34,9 +34,9 @@ class HandlersRegistrator:
         dp.register_callback_query_handler(self.register.register_user, text_contains="register_user", state="*")
 
         #       УСТРОЙСТВА
-        # Показ устройств
+        # Список устройств
         dp.register_callback_query_handler(
-            self.devices.list_devices, text_contains=Devices.device_list_prefix, state="*"
+            self.devices.list_devices, text_contains=Devices.device_list_prefix, state="*",
         )
         # Создать новую конфигурацию, ввести имя
         dp.register_callback_query_handler(
@@ -67,4 +67,12 @@ class HandlersRegistrator:
         # Информация о пользователе
         dp.register_callback_query_handler(
             self.users.user_details, text_contains=Users.user_details_prefix, state="admin"
+        )
+        # Варианты добавления пользователя
+        dp.register_callback_query_handler(
+            self.users.add_user_options, text_contains="add_user_options", state="admin"
+        )
+        # Варианты привязки пользователя к Telegram аккаунту
+        dp.register_callback_query_handler(
+            self.users.link_telegram_account, text_contains=Users.link_tg_account_prefix, state="admin"
         )

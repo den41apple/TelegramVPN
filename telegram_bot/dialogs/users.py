@@ -6,16 +6,18 @@ import asyncio
 from aiogram.dispatcher import FSMContext
 from aiogram.types import CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.utils.deep_linking import get_start_link
 
 from firezone_api import FirezoneApi
 from firezone_api.models import User
-from telegram_bot.backend.db.actions import get_all_users
-from telegram_bot.backend.utils import check_admin_access
+from telegram_bot.backend.db.actions import get_all_users, get_user_by_fz_user_id
+from telegram_bot.backend.utils import check_admin_access, RegexpPatterns, generate_password
 from telegram_bot.dialogs.devices import Devices
 
 
 class Users:
-    user_details_prefix = "user_details_"
+    user_details_prefix = "user_details"
+    link_tg_account_prefix = "link_tg_account"
 
     def __init__(self):
         self._api = FirezoneApi()
@@ -43,7 +45,7 @@ class Users:
         await callback_query.message.answer(answer, reply_markup=keyboard)
 
     def _fill_buttons_for_list_users(
-        self, users: list[User], keyboard: InlineKeyboardMarkup, telegram_fz_user_ids: set
+            self, users: list[User], keyboard: InlineKeyboardMarkup, telegram_fz_user_ids: set
     ):
         """Создает клавиатуру для списка пользователей"""
         prefix = self.__class__.user_details_prefix
@@ -58,7 +60,7 @@ class Users:
             if user.id in telegram_fz_user_ids:
                 tg_related = "🔗"
             button_text = f"{tg_related} {i + 1}) {user.email}"
-            row.append(InlineKeyboardButton(button_text, callback_data=f"/{prefix}{user.id}"))
+            row.append(InlineKeyboardButton(button_text, callback_data=f"/{prefix}_<id:{user.id}>"))
         if len(row) != 0:
             keyboard.add(*row)
 
@@ -67,26 +69,59 @@ class Users:
         """
         Отображает информацию о пользователе
         """
-        prefix = self.__class__.user_details_prefix
-        fz_user_id = callback_query.data.replace(f"/{prefix}", "")
-        user, devices = await asyncio.gather(
-            self._api.get_user_by_id(user_id=fz_user_id), self._api.get_devices(user_id=fz_user_id)
-        )
+        callback_data = callback_query.data
+        pattern = RegexpPatterns.id_pattern
+        fz_user_id = pattern.findall(callback_data)[0]
+        user, fz_user, devices = await asyncio.gather(get_user_by_fz_user_id(fz_user_id=fz_user_id),
+                                                      self._api.get_user_by_id(user_id=fz_user_id),
+                                                      self._api.get_devices(user_id=fz_user_id))
         # TODO: Отработать вариант с отсутствующим пользователем
         message_text = (
-            f"ID: {user.id}\n"
-            f"Email: {user.email}\n"
-            f"Роль: {user.role}\n"
-            f"Последний вход: {user.last_signed_in_at}\n"
-            f"Создан: {user.inserted_at}\n"
-            f"Обновлен: {user.updated_at}\n"
+            f"ID: {fz_user.id}\n"
+            f"Email: {fz_user.email}\n"
+            f"Роль: {fz_user.role}\n"
+            f"Последний вход: {fz_user.last_signed_in_at}\n"
+            f"Создан: {fz_user.inserted_at}\n"
+            f"Обновлен: {fz_user.updated_at}\n"
             f"Кол-во устройств: {len(devices)}\n"
-            f"Последний вход с помощью: {user.last_signed_in_method}\n"
+            f"Последний вход с помощью: {fz_user.last_signed_in_method}\n"
         )
         keyboard = InlineKeyboardMarkup()
         keyboard.add(
-            InlineKeyboardButton(
-                f"Устройства [{len(devices)} шт]", callback_data=f"/{Devices.device_list_prefix}_<id:{fz_user_id}>"
+            InlineKeyboardButton(f"Устройства [{len(devices)} шт]",
+                                 callback_data=f"/{Devices.device_list_prefix}_<id:{fz_user_id}>"),
+        )
+        if user is None:
+            keyboard.add(
+                InlineKeyboardButton(f"🔗 Связать с телеграм-аккаунтом",
+                                     callback_data=f"/{Users.link_tg_account_prefix}_<id:{fz_user_id}>")
+
             )
+        await callback_query.message.answer(message_text, reply_markup=keyboard)
+
+    @check_admin_access
+    async def link_telegram_account(self, callback_query: CallbackQuery, state: FSMContext):
+        """
+        Варианты добавления пользователя
+        """
+        callback_data = callback_query.data
+        pattern = RegexpPatterns.id_pattern
+        fz_user_id = pattern.findall(callback_data)[0]
+        link_param = generate_password(length=10, special_symbols=False)
+        link = await get_start_link(link_param)
+        # TODO: Реализовать запись в БД
+        message_text = ("Ссылка для привязки пользователя Telegram"
+                        f"\n\n{link}")
+        keyboard = InlineKeyboardMarkup()
+        keyboard.add(
+            InlineKeyboardButton(f"Назад",
+                                 callback_data=f"/{Users.user_details_prefix}_<id:{fz_user_id}>"),
         )
         await callback_query.message.answer(message_text, reply_markup=keyboard)
+
+    @check_admin_access
+    async def add_user_options(self, callback_query: CallbackQuery, state: FSMContext):
+        """
+        Варианты добавления пользователя
+        """
+        raise NotImplementedError
