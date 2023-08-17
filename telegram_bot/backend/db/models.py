@@ -35,8 +35,7 @@ class User(Base):
 
 class DeeplinkAction(Base):
     __tablename__ = "deeplink_actions"
-    id = Column(Integer, primary_key=True)
-    deeplink_value = Column(String(100), unique=True, nullable=False, default="EMPTY")
+    id = Column(String(20), primary_key=True)
     to_link = Column(Boolean, default=False)  # Привязка пользователя
     fz_user_id = Column(String(100), unique=True)
     to_create = Column(Boolean, default=False)  # Создание пользователя

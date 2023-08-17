@@ -27,6 +27,7 @@ async def get_user_by_email(email: str) -> User | None:
         user = result.one_or_none()
     return user
 
+
 async def get_user_by_fz_user_id(fz_user_id: str) -> User | None:
     """
     Получает пользователя по email
