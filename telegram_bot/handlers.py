@@ -65,7 +65,7 @@ class HandlersRegistrator:
         )
         # Варианты добавления пользователя
         dp.register_callback_query_handler(
-            self.users.add_user_options, text_contains="add_user_options", state="*"
+            self.users.add_user, text_contains=Users.add_user_prefix, state="*"
         )
         # Генерация ссылки создания нового пользователя
         dp.register_callback_query_handler(

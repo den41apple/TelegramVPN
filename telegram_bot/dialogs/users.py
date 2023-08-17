@@ -13,15 +13,16 @@ from firezone_api import FirezoneApi
 from firezone_api.models import User
 from telegram_bot.backend.db import async_session
 from telegram_bot.backend.db.models import DeeplinkAction
-from telegram_bot.backend.db.actions import get_all_users, get_user_by_fz_user_id, get_deeplink_action_by_id
-from telegram_bot.backend.utils import check_admin_access, RegexpPatterns, generate_password, escaping, \
-    extract_id_from_callback_data
+from telegram_bot.backend.db.actions import get_all_users, get_user_by_fz_user_id
+from telegram_bot.backend.utils import (check_admin_access, generate_password, escaping,
+                                        extract_id_from_callback_data)
 from telegram_bot.dialogs.devices import Devices
 
 
 class Users:
     list_users_prefix = "list_users"
     user_details_prefix = "user_details"
+    add_user_prefix = "add_user_options"
     link_tg_account_prefix = "link_tg_account"
     generate_user_create_link_prefix = "generate_user_create_link"
 
@@ -129,7 +130,7 @@ class Users:
         await callback_query.message.answer(message_text, reply_markup=keyboard, parse_mode="MarkdownV2")
 
     @check_admin_access
-    async def add_user_options(self, callback_query: CallbackQuery, state: FSMContext):
+    async def add_user(self, callback_query: CallbackQuery, state: FSMContext):
         """
         Варианты добавления пользователя
         """
@@ -156,4 +157,3 @@ class Users:
         link = escaping(link)
         message_text = f"Ссылка для *создания* пользователя Telegram \n*Нажмите, что бы скопировать* \n\n`{link}`"
         await callback_query.message.answer(message_text, parse_mode="MarkdownV2")
-

@@ -65,7 +65,8 @@ def escaping(txt):
     """
     Экранирует проблемные символы для использования с Markdown
     """
-    problem_symbols = ['.', '-', '?', '!', '(', ')', "=", "_"]
+    problem_symbols = ['.', '-', '?', '!', '(', ')',
+                       "=", "_", "[", "]", "+"]
     for symb in problem_symbols:
         txt = txt.replace(symb, '\\' + symb)
     return txt
