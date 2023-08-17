@@ -9,7 +9,8 @@ from aiogram.types import CallbackQuery, InlineKeyboardMarkup, InlineKeyboardBut
 
 from firezone_api import FirezoneApi
 from firezone_api.exceptions import UserAlreadyExistsError
-from telegram_bot.backend.db import User, async_session
+from telegram_bot.backend.db import async_session
+from telegram_bot.backend.db.models import User
 from telegram_bot.backend.utils import generate_password
 
 

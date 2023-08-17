@@ -15,6 +15,7 @@ class User(Base):
     first_name = Column(String(50))
     last_name = Column(String(50))
     username = Column(String(50))
+    linked = Column(Boolean, default=False)  # Если был связан через телеграм
     fz_user_id = Column(String(100), unique=True)
     fz_is_admin = Column(Boolean, default=False)
     fz_email = Column(String(100))

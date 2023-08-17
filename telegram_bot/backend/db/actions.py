@@ -1,7 +1,8 @@
 """
 Действия с Базой данных
 """
-from telegram_bot.backend.db import User, async_session
+from telegram_bot.backend.db import async_session
+from telegram_bot.backend.db.models import User, DeeplinkAction
 from sqlalchemy import select
 from sqlalchemy.engine import Result
 
@@ -48,3 +49,11 @@ async def get_all_users() -> list[User]:
         result: Result = await session.scalars(statement)
         users = result.all()
     return users
+
+
+async def get_deeplink_action_by_id(action_id: str) -> DeeplinkAction:
+    statement = select(DeeplinkAction).where(DeeplinkAction.id == action_id)
+    async with async_session() as session:
+        result: Result = await session.scalars(statement)
+        deeplink_action = result.one_or_none()
+    return deeplink_action
