@@ -82,21 +82,25 @@ class Devices:
         """
         Запрашивает имя для нового устройства
         """
+        chat_id = callback_query.message.chat.id
         callback_data = callback_query.data
         pattern = RegexpPatterns.id_pattern
         fz_user_ids = pattern.findall(callback_data)
         message_text = ""
         if len(fz_user_ids) != 0:
-            # Если админ
+            # Если в режиме админа
             fz_user_id = fz_user_ids[0]
             fz_user = await self._api.get_user_by_id(user_id=fz_user_id)
-            await state.update_data({"user_id": fz_user_id})
             # TODO: Отработать вариант с отсутствием пользователя
             message_text = f'Добавление устройства для пользователя "{fz_user.email}"\n\n'
+        else:
+            user = await get_user_by_chat_id(chat_id=chat_id)
+            fz_user_id = user.fz_user_id
         message_text += "Введите имя новой конфигурации:"
         keyboard = InlineKeyboardMarkup()
         keyboard.add(InlineKeyboardButton("Назад", callback_data=f"/{self.__class__.device_list_prefix}"))
-        await callback_query.message.answer(message_text, reply_markup=keyboard)
+        await asyncio.gather(callback_query.message.answer(message_text, reply_markup=keyboard),
+                             state.update_data({"user_id": fz_user_id}))
         await state.set_state("enter_device_name")
 
     async def create_new_device(self, message: Message, state: FSMContext):
