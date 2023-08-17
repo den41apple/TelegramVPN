@@ -17,6 +17,17 @@ async def get_user_by_chat_id(chat_id: int) -> User | None:
     return user
 
 
+async def get_user_by_email(email: str) -> User | None:
+    """
+    Получает пользователя по email
+    """
+    statement = select(User).where(User.email == email)
+    async with async_session() as session:
+        result: Result = await session.scalars(statement)
+        user = result.one_or_none()
+    return user
+
+
 async def get_all_users() -> list[User]:
     """
     Запрашивает всех пользователей

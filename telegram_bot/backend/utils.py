@@ -28,9 +28,7 @@ def check_admin_access(func: Callable) -> Callable:
     к администрированию
     """
 
-    async def wrapper(self,
-                      callback_query_or_message: Message | CallbackQuery,
-                      state: FSMContext) -> Any:
+    async def wrapper(self, callback_query_or_message: Message | CallbackQuery, state: FSMContext) -> Any:
         if isinstance(callback_query_or_message, Message):
             message = callback_query_or_message
         elif isinstance(callback_query_or_message, CallbackQuery):
@@ -46,5 +44,6 @@ def check_admin_access(func: Callable) -> Callable:
 
     return wrapper
 
+
 class RegexpPatterns:
-    id_pattern = re.compile(r"<id:([a-zA-Z0-9\-]+)>")
+    id_pattern = re.compile(r"<id:([\w\d\-]+)>")
