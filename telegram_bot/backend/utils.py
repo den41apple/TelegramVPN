@@ -47,5 +47,29 @@ def check_admin_access(func: Callable) -> Callable:
     return wrapper
 
 
+def extract_id_from_callback_data(callback_query: CallbackQuery) -> str | None:
+    """Извлекает id из Callback data"""
+    callback_data = callback_query.data
+    pattern = RegexpPatterns.id_pattern
+    ids = pattern.findall(callback_data)
+    if len(ids) == 0:
+        return None
+    elif len(ids) == 1:
+        return ids[0]
+    else:
+        raise ValueError("В Callback Data обнаружено несколько ID"
+                         f'\nDATA :: "{callback_data}"')
+
+
+def escaping(txt):
+    """
+    Экранирует проблемные символы для использования с Markdown
+    """
+    problem_symbols = ['.', '-', '?', '!', '(', ')', "=", "_"]
+    for symb in problem_symbols:
+        txt = txt.replace(symb, '\\' + symb)
+    return txt
+
+
 class RegexpPatterns:
     id_pattern = re.compile(r"<id:([\w\d\-]+)>")

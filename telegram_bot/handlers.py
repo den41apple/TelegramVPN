@@ -4,14 +4,12 @@
 from aiogram import Bot
 from aiogram.dispatcher import Dispatcher
 
-from telegram_bot.dialogs import Main, Devices, Register, Admin, Users
+from telegram_bot.dialogs import Main, Devices, Admin, Users
 
 
 class HandlersRegistrator:
     def __init__(self, bot: Bot, dispatcher: Dispatcher):
         self.main = Main()
-        # Регистрация пользователей
-        self.register = Register()
         # Администрирование
         self.admin = Admin()
         # Пользователи
@@ -23,15 +21,8 @@ class HandlersRegistrator:
         self.register_handlers(dispatcher)
 
     def register_handlers(self, dp: Dispatcher):
-        # Приветственное сообщение
+        # Приветственное сообщение, привязка, и создание пользователя
         dp.register_message_handler(self.main.start, commands="start", state="*")
-        #       РЕГИСТРАЦИЯ
-        # Сообщение инструкция Регистрация пользователей
-        dp.register_callback_query_handler(
-            self.register.registration_options, text_contains="registration_options", state="*"
-        )
-        # Создание пользователя
-        dp.register_callback_query_handler(self.register.register_user, text_contains="register_user", state="*")
 
         #       УСТРОЙСТВА
         # Список устройств
@@ -62,17 +53,23 @@ class HandlersRegistrator:
         dp.register_message_handler(self.admin.welcome, commands="admin", state="*")
         # Список пользователей
         dp.register_callback_query_handler(
-            self.users.list_users, text_contains="list_users", state="admin"
+            self.users.list_users, text_contains=Users.list_users_prefix, state="*"
         )
         # Информация о пользователе
         dp.register_callback_query_handler(
-            self.users.user_details, text_contains=Users.user_details_prefix, state="admin"
-        )
-        # Варианты добавления пользователя
-        dp.register_callback_query_handler(
-            self.users.add_user_options, text_contains="add_user_options", state="admin"
+            self.users.user_details, text_contains=Users.user_details_prefix, state="*"
         )
         # Варианты привязки пользователя к Telegram аккаунту
         dp.register_callback_query_handler(
-            self.users.link_telegram_account, text_contains=Users.link_tg_account_prefix, state="admin"
+            self.users.link_telegram_account, text_contains=Users.link_tg_account_prefix, state="*"
         )
+        # Варианты добавления пользователя
+        dp.register_callback_query_handler(
+            self.users.add_user_options, text_contains="add_user_options", state="*"
+        )
+        # Генерация ссылки создания нового пользователя
+        dp.register_callback_query_handler(
+            self.users.generate_user_create_link,
+            text_contains=Users.generate_user_create_link_prefix, state="*"
+        )
+

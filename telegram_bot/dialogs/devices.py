@@ -10,8 +10,8 @@ from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from firezone_api import FirezoneApi
 from firezone_api.models import Device
 from telegram_bot.backend import prepare_configuration_qr_and_message
-from telegram_bot.backend.db.actions import get_user_by_chat_id, get_user_by_email
-from telegram_bot.backend.utils import RegexpPatterns
+from telegram_bot.backend.db.actions import get_user_by_chat_id
+from telegram_bot.backend.utils import extract_id_from_callback_data
 
 
 class Devices:
@@ -30,16 +30,13 @@ class Devices:
         await state.set_state("*")
         chat_id = callback_query.message.chat.id
         # Определим передан ли конкретный Id пользователя
-        callback_data = callback_query.data
-        pattern = RegexpPatterns.id_pattern
-        fz_user_ids = []
+        fz_user_id_from_data = extract_id_from_callback_data(callback_query)
         if fz_user_id is None:
-            fz_user_ids = pattern.findall(callback_data)
-            if len(fz_user_ids) == 0:
+            if fz_user_id_from_data is None:
                 fz_user = await get_user_by_chat_id(chat_id=chat_id)
                 fz_user_id = fz_user.fz_user_id
             else:
-                fz_user_id = fz_user_ids[0]
+                fz_user_id = fz_user_id_from_data
         devices: list[Device] = await self._api.get_devices(user_id=fz_user_id)
         answer = ""
         if len(devices) == 0:
@@ -57,7 +54,7 @@ class Devices:
         keyboard = InlineKeyboardMarkup()
         self._fill_buttons_for_list_devices(devices=devices, keyboard=keyboard)
         callback_data = "/create_device"
-        if len(fz_user_ids) != 0:
+        if fz_user_id_from_data is not None:
             callback_data += f"_<id:{fz_user_id}>"
         keyboard.add(InlineKeyboardButton("Добавить устройство", callback_data=callback_data))
         await callback_query.message.answer(answer, reply_markup=keyboard)
@@ -83,13 +80,10 @@ class Devices:
         Запрашивает имя для нового устройства
         """
         chat_id = callback_query.message.chat.id
-        callback_data = callback_query.data
-        pattern = RegexpPatterns.id_pattern
-        fz_user_ids = pattern.findall(callback_data)
+        fz_user_id = extract_id_from_callback_data(callback_query)
         message_text = ""
-        if len(fz_user_ids) != 0:
+        if fz_user_id is not None:
             # Если в режиме админа
-            fz_user_id = fz_user_ids[0]
             fz_user = await self._api.get_user_by_id(user_id=fz_user_id)
             # TODO: Отработать вариант с отсутствием пользователя
             message_text = f'Добавление устройства для пользователя "{fz_user.email}"\n\n'
@@ -98,7 +92,7 @@ class Devices:
             fz_user_id = user.fz_user_id
         message_text += "Введите имя новой конфигурации:"
         keyboard = InlineKeyboardMarkup()
-        keyboard.add(InlineKeyboardButton("Назад", callback_data=f"/{self.__class__.device_list_prefix}"))
+        keyboard.add(InlineKeyboardButton("Отмена", callback_data=f"/{self.__class__.device_list_prefix}"))
         await asyncio.gather(callback_query.message.answer(message_text, reply_markup=keyboard),
                              state.update_data({"user_id": fz_user_id}))
         await state.set_state("enter_device_name")
@@ -124,9 +118,8 @@ class Devices:
         """
         Получает детальную информацию по устройству
         """
-        pattern = RegexpPatterns.id_pattern
         callback_data = callback_query.data
-        device_id = pattern.findall(callback_data)[0]
+        device_id = extract_id_from_callback_data(callback_query)
         device = await self._api.get_device_by_id(device_id=device_id)
         text_message = self._create_device_details_message(device=device)
         keyboard = InlineKeyboardMarkup()
@@ -172,9 +165,7 @@ class Devices:
 
     async def device_confirm_delete(self, callback_query: CallbackQuery, state: FSMContext):
         """Подтверждение удаления устройства"""
-        pattern = RegexpPatterns.id_pattern
-        callback_data = callback_query.data
-        device_id = pattern.findall(callback_data)[0]
+        device_id = extract_id_from_callback_data(callback_query)
         device = await self._api.get_device_by_id(device_id=device_id)
         text_message = self._create_device_details_message(device=device)
         text_message += "\n\nУдалить?"
@@ -188,9 +179,7 @@ class Devices:
         await callback_query.message.edit_text(text_message, reply_markup=keyboard)
 
     async def delete_device(self, callback_query: CallbackQuery, state: FSMContext):
-        pattern = RegexpPatterns.id_pattern
-        callback_data = callback_query.data
-        device_id = pattern.findall(callback_data)[0]
+        device_id = extract_id_from_callback_data(callback_query)
         device = await self._api.get_device_by_id(device_id=device_id)
         fz_user_id = device.user_id
         await self._api.delete_device(device_id=device_id)

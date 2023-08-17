@@ -8,18 +8,22 @@ from aiogram.types import CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.deep_linking import get_start_link
 
+import config
 from firezone_api import FirezoneApi
 from firezone_api.models import User
 from telegram_bot.backend.db import async_session
 from telegram_bot.backend.db.models import DeeplinkAction
-from telegram_bot.backend.db.actions import get_all_users, get_user_by_fz_user_id
-from telegram_bot.backend.utils import check_admin_access, RegexpPatterns, generate_password
+from telegram_bot.backend.db.actions import get_all_users, get_user_by_fz_user_id, get_deeplink_action_by_id
+from telegram_bot.backend.utils import check_admin_access, RegexpPatterns, generate_password, escaping, \
+    extract_id_from_callback_data
 from telegram_bot.dialogs.devices import Devices
 
 
 class Users:
+    list_users_prefix = "list_users"
     user_details_prefix = "user_details"
     link_tg_account_prefix = "link_tg_account"
+    generate_user_create_link_prefix = "generate_user_create_link"
 
     def __init__(self):
         self._api = FirezoneApi()
@@ -29,6 +33,7 @@ class Users:
         """
         Отображает список пользователей
         """
+        # TODO обновлять e-mail в БД телеграма
         fz_users, users = await asyncio.gather(self._api.get_users(), get_all_users())
         telegram_fz_user_ids = {user.fz_user_id for user in users}
         answer = ""
@@ -47,7 +52,7 @@ class Users:
         await callback_query.message.answer(answer, reply_markup=keyboard)
 
     def _fill_buttons_for_list_users(
-        self, users: list[User], keyboard: InlineKeyboardMarkup, telegram_fz_user_ids: set
+            self, users: list[User], keyboard: InlineKeyboardMarkup, telegram_fz_user_ids: set
     ):
         """Создает клавиатуру для списка пользователей"""
         prefix = self.__class__.user_details_prefix
@@ -71,9 +76,7 @@ class Users:
         """
         Отображает информацию о пользователе
         """
-        callback_data = callback_query.data
-        pattern = RegexpPatterns.id_pattern
-        fz_user_id = pattern.findall(callback_data)[0]
+        fz_user_id = extract_id_from_callback_data(callback_query)
         user, fz_user, devices = await asyncio.gather(
             get_user_by_fz_user_id(fz_user_id=fz_user_id),
             self._api.get_user_by_id(user_id=fz_user_id),
@@ -110,25 +113,47 @@ class Users:
         """
         Варианты добавления пользователя
         """
-        callback_data = callback_query.data
-        pattern = RegexpPatterns.id_pattern
-        fz_user_id = pattern.findall(callback_data)[0]
+        fz_user_id = extract_id_from_callback_data(callback_query)
         link_param = generate_password(length=10, special_symbols=False)
         link = await get_start_link(link_param)
         deeplink_action = DeeplinkAction(id=link_param, to_link=True, fz_user_id=fz_user_id)
         async with async_session() as session:
             async with session.begin():
                 session.add(deeplink_action)
-        message_text = "Ссылка для привязки пользователя Telegram" f"\n\n{link}"
+        link = escaping(link)
+        message_text = f"Ссылка для *привязки* пользователя Telegram \n*Нажмите, что бы скопировать* \n\n`{link}`"
         keyboard = InlineKeyboardMarkup()
         keyboard.add(
             InlineKeyboardButton(f"Назад", callback_data=f"/{Users.user_details_prefix}_<id:{fz_user_id}>"),
         )
-        await callback_query.message.answer(message_text, reply_markup=keyboard)
+        await callback_query.message.answer(message_text, reply_markup=keyboard, parse_mode="MarkdownV2")
 
     @check_admin_access
     async def add_user_options(self, callback_query: CallbackQuery, state: FSMContext):
         """
         Варианты добавления пользователя
         """
-        raise NotImplementedError
+        message_text = "Пользователь сможет создать учетную запись по сгенерированной ссылке"
+
+        keyboard = InlineKeyboardMarkup()
+        generate_link_prefix = self.__class__.generate_user_create_link_prefix
+        list_users_prefix = self.__class__.list_users_prefix
+        keyboard.add(InlineKeyboardButton(f"Сгенерировать ссылку", callback_data=f"/{generate_link_prefix}"))
+        keyboard.add(InlineKeyboardButton(f"Назад", callback_data=f"/{list_users_prefix}"))
+        await callback_query.message.answer(message_text, reply_markup=keyboard)
+
+    @check_admin_access
+    async def generate_user_create_link(self, callback_query: CallbackQuery, state: FSMContext):
+        """
+        Генерация ссылки для нового пользователя
+        """
+        link_param = generate_password(length=10, special_symbols=False)
+        deeplink_action = DeeplinkAction(id=link_param, to_create=True)
+        async with async_session() as session:
+            async with session.begin():
+                session.add(deeplink_action)
+        link = await get_start_link(link_param)
+        link = escaping(link)
+        message_text = f"Ссылка для *создания* пользователя Telegram \n*Нажмите, что бы скопировать* \n\n`{link}`"
+        await callback_query.message.answer(message_text, parse_mode="MarkdownV2")
+

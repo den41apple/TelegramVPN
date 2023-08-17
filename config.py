@@ -16,6 +16,8 @@ TG_WEBHOOK_PATH = env.str("TG_WEBHOOK_PATH", default="/path/to/api")
 TG_WEBAPP_HOST = env.str("TG_WEBAPP_HOST", default="localhost")
 TG_APP_PORT = env.str("TG_APP_PORT", default="8088")
 TG_ADMINS: set = env.list("TG_ADMINS", default={}, postprocessor=lambda x: set(map(int, x)))  # Chat_ids администраторов
+# Домен по умолчанию при регистрации пользователя
+TG_DEFAULT_EMAIL_DOMAIN = env.str("TG_DEFAULT_EMAIL_DOMAIN", default="telegram_bot.ru")
 # SQLAlchemy
 TG_DB_URL = env.str("TG_DB_URL")
 TG_DB_ECHO = env.bool("TG_DB_ECHO", default=False)

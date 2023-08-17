@@ -16,7 +16,6 @@ class Admin:
 
     @check_admin_access
     async def welcome(self, message: Message, state: FSMContext):
-        await state.set_state("admin")
         message_text = f"Приветствую в режиме администратора"
         keyboard = InlineKeyboardMarkup()
         keyboard.add(InlineKeyboardButton("Список пользователей", callback_data=f"/list_users"))
