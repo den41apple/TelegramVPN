@@ -188,7 +188,6 @@ class Devices:
         await callback_query.message.edit_text(text_message, reply_markup=keyboard)
 
     async def delete_device(self, callback_query: CallbackQuery, state: FSMContext):
-        # TODO: реализовать
         pattern = RegexpPatterns.id_pattern
         callback_data = callback_query.data
         device_id = pattern.findall(callback_data)[0]

@@ -20,7 +20,7 @@ pillow = "10.0.0"
 configparser = "^6.0.0"
 django = "^4.2.4"
 certifi = ">=2023.07.22"
-sqlalchemy = ">=1.4,<2.0"
+sqlalchemy = {version = ">=1.4,<2.0", extras = ["asyncio"]}
 alembic = "^1.11.2"
 black = "^23.7.0"
 aiosqlite = "^0.19.0"
