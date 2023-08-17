@@ -43,9 +43,8 @@ class Users:
             if user.id in telegram_fz_user_ids:
                 answer += "🔗 "
             answer += f"Пользователь №{i + 1}:"
-            answer += f"\nemail: {user.email}"
-            answer += f"\nrole: {user.role}"
-            answer += f"\ncreated at: {user.last_signed_in_at}"
+            answer += f"\nE-mail: {user.email}"
+            answer += f"\nРоль: {user.role}"
             answer += "\n\n"
         keyboard = InlineKeyboardMarkup()
         self._fill_buttons_for_list_users(users=fz_users, keyboard=keyboard, telegram_fz_user_ids=telegram_fz_user_ids)
@@ -85,8 +84,8 @@ class Users:
         )
         # TODO: Отработать вариант с отсутствующим пользователем
         message_text = (
+            f"E-mail: {fz_user.email}\n\n"
             f"ID: {fz_user.id}\n"
-            f"Email: {fz_user.email}\n"
             f"Роль: {fz_user.role}\n"
             f"Последний вход: {fz_user.last_signed_in_at}\n"
             f"Создан: {fz_user.inserted_at}\n"
@@ -107,6 +106,12 @@ class Users:
                     callback_data=f"/{Users.link_tg_account_prefix}_<id:{fz_user_id}>",
                 )
             )
+        prefix = self.__class__.list_users_prefix
+        keyboard.add(
+            InlineKeyboardButton(
+                f"Назад", callback_data=f"/{prefix}_<id:{fz_user_id}>"
+            ),
+        )
         await callback_query.message.answer(message_text, reply_markup=keyboard)
 
     @check_admin_access
