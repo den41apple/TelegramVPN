@@ -12,10 +12,17 @@ async def get_user_by_chat_id(chat_id: int) -> User | None:
     """
     statement = select(User).where(User.chat_id == chat_id)
     async with async_session() as session:
-        result: Result = await session.execute(statement)
+        result: Result = await session.scalars(statement)
         user = result.one_or_none()
-        if user is not None:
-            user = user[0]
     return user
 
 
+async def get_all_users() -> list[User]:
+    """
+    Запрашивает всех пользователей
+    """
+    statement = select(User)
+    async with async_session() as session:
+        result: Result = await session.scalars(statement)
+        users = result.all()
+    return users
