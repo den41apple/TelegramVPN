@@ -4,3 +4,4 @@ venv
 *.bat
 firezone-docker
 *.sqlite3
+/pg-data/

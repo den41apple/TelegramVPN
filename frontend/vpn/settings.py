@@ -1,5 +1,4 @@
 from pathlib import Path
-import config
 import sys
 
 
@@ -7,6 +6,7 @@ import sys
 BASE_DIR = Path(__file__).resolve().parent.parent
 PYTHON_PROJECT_DIR = BASE_DIR.parent
 sys.path.append(str(PYTHON_PROJECT_DIR))
+import config
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
@@ -15,12 +15,13 @@ sys.path.append(str(PYTHON_PROJECT_DIR))
 SECRET_KEY = config.DJ_SECRET_KEY
 
 # SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = True
+DEBUG = config.DJ_DEBUG
 
 ALLOWED_HOSTS = ["*"]
 
 INTERNAL_IPS = [
     "127.0.0.1",
+    "localhost",
 ]
 
 # Application definition
@@ -48,8 +49,9 @@ MIDDLEWARE = [
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
-    "debug_toolbar.middleware.DebugToolbarMiddleware",
 ]
+if DEBUG:
+    MIDDLEWARE.append("debug_toolbar.middleware.DebugToolbarMiddleware")
 
 ROOT_URLCONF = "vpn.urls"
 
@@ -116,10 +118,11 @@ USE_TZ = True
 # https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
+if not DEBUG:
+    STATIC_ROOT = BASE_DIR / "static"
 
-STATICFILES_DIRS = [
-    BASE_DIR / "static",
-]
+if DEBUG:
+    STATICFILES_DIRS = [BASE_DIR / "static"]
 
 # Default primary key field type
 # https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
