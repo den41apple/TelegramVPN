@@ -25,6 +25,7 @@ services:
       - .env
     environment:
       DJ_DEBUG: False
+      POSTGRES_HOST: pg
     volumes:
       - ./:/app
     ports:
