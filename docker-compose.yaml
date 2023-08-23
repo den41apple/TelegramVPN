@@ -8,11 +8,14 @@ services:
       context: ./
     env_file:
       - .env
+    environment:
+      POSTGRES_HOST: pg
     volumes:
       - ./:/app
-#    depends_on:
-#      pg:
-#        condition: service_healthy
+    depends_on:
+      pg:
+        condition: service_healthy
+
   site:
     container_name: site
     build:
@@ -39,8 +42,9 @@ services:
       - "8888:8888"
     volumes:
       - ./frontend/static:/static
-      - ./nginx.conf:/etc/nginx/conf.d/site.conf
+      - ./docker/nginx.conf:/etc/nginx/conf.d/site.conf
     restart: always
+
   pg:
     container_name: pg
     image: postgres:14-bullseye
@@ -51,6 +55,7 @@ services:
       - "5432:5432"
     volumes:
       - ./pg-data:/var/lib/postgresql/data
+      - ./docker/init_db.sql:/docker-entrypoint-initdb.d/init_db.sql
     healthcheck:
       test: [ "CMD-SHELL", "pg_isready" ]
       interval: 5s
