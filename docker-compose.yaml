@@ -33,8 +33,8 @@ services:
     depends_on:
       nginx:
         condition: service_started
-#      pg:
-#        condition: service_healthy
+      pg:
+        condition: service_healthy
 
   nginx:
     container_name: nginx
