@@ -33,6 +33,8 @@ def prepare_config_file(device: Device, file_name: str) -> tuple[StringIO, str]:
     Подготавливает строку конфигурационного файла
     """
     config = configparser.ConfigParser()
+    # Что бы Ключи в нижний регистр не приводил
+    config.optionxform = str
     file_object = StringIO()
     address = f"{device.ipv4}/32,{device.ipv6}/128"
     config["Interface"] = {
