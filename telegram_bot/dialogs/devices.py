@@ -93,8 +93,10 @@ class Devices:
         message_text += "Введите имя новой конфигурации:"
         keyboard = InlineKeyboardMarkup()
         keyboard.add(InlineKeyboardButton("Отмена", callback_data=f"/{self.__class__.device_list_prefix}"))
-        await asyncio.gather(callback_query.message.answer(message_text, reply_markup=keyboard),
-                             state.update_data({"user_id": fz_user_id}))
+        await asyncio.gather(
+            callback_query.message.answer(message_text, reply_markup=keyboard),
+            state.update_data({"user_id": fz_user_id}),
+        )
         await state.set_state("enter_device_name")
 
     async def create_new_device(self, message: Message, state: FSMContext):
@@ -109,10 +111,11 @@ class Devices:
         wait_message = await message.answer("Создается конфигурация...")
         device = await self._api.create_device(user_id=fz_user_id, device_name=message.text.strip())
         config_file, qr_file = prepare_configuration_qr_and_message(device=device)
-        message_text = "Ваш конфигурационный файл"
+        message_text = "QR код для сканирования"
         await wait_message.delete()
         await message.answer_photo(photo=qr_file, caption=message_text)
-        await message.answer_document(document=config_file)
+        message_text = "Конфигурация"
+        await message.answer_document(document=config_file, caption=message_text)
 
     async def device_details(self, callback_query: CallbackQuery, state: FSMContext):
         """
@@ -130,10 +133,8 @@ class Devices:
         )
         keyboard.add(InlineKeyboardButton("Назад", callback_data=f"/{self.__class__.device_list_prefix}"))
         if "<edit>" in callback_data:
-            return await callback_query.message.edit_text(text_message, reply_markup=keyboard,
-                                                          parse_mode="MarkdownV2")
-        await callback_query.message.answer(text_message, reply_markup=keyboard,
-                                            parse_mode="MarkdownV2")
+            return await callback_query.message.edit_text(text_message, reply_markup=keyboard, parse_mode="MarkdownV2")
+        await callback_query.message.answer(text_message, reply_markup=keyboard, parse_mode="MarkdownV2")
 
     def _create_device_details_message(self, device: Device) -> str:
         """Формирует детальную информацию об устройстве"""
@@ -150,11 +151,10 @@ class Devices:
             f"DNS: {device.dns}",
             f"Endpoint: `{device.endpoint}`",
             f"MTU: {device.mtu}",
-            f'Public key: `{device.public_key}`',
-            f'Preshared Key: `{device.preshared_key}`',
-
+            f"Public key: `{device.public_key}`",
+            f"Preshared Key: `{device.preshared_key}`",
         )
-        text_message = '\n- '.join(text_message)
+        text_message = "\n- ".join(text_message)
         text_message = escaping(text_message)
         return text_message
 
@@ -187,8 +187,7 @@ class Devices:
             InlineKeyboardButton("Да", callback_data=f"/{delete_device_prefix}_<id:{device_id}>"),
             InlineKeyboardButton("Отмена", callback_data=f"/{device_details_prefix}_<id:{device_id}>_<edit>"),
         )
-        await callback_query.message.edit_text(text_message, reply_markup=keyboard,
-                                               parse_mode="MarkdownV2")
+        await callback_query.message.edit_text(text_message, reply_markup=keyboard, parse_mode="MarkdownV2")
 
     async def delete_device(self, callback_query: CallbackQuery, state: FSMContext):
         device_id = extract_id_from_callback_data(callback_query)

@@ -22,6 +22,7 @@ INTERNAL_IPS = [
     "127.0.0.1",
     "localhost",
 ]
+CSRF_TRUSTED_ORIGINS = config.DJ_CSRF_TRUSTED_ORIGINS
 
 # Application definition
 

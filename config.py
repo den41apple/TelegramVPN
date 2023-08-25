@@ -33,6 +33,8 @@ DJ_SECRET_KEY = env.str("DJ_SECRET_KEY")
 DJ_TELEGRAM_BOT_URL = env.str("DJ_TELEGRAM_BOT_URL")
 DJ_DEBUG = env.bool("DJ_DEBUG", default=True)
 DJ_DB_NAME = env.str("DJ_DB_NAME")
+# url с портом разрешенные для генерации csrf токенов
+DJ_CSRF_TRUSTED_ORIGINS = env.list("DJ_CSRF_TRUSTED_ORIGINS", default=[])
 
 ########################################################################################################################
 #                                                      ОБЩЕЕ                                                           #
