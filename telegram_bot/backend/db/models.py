@@ -3,7 +3,7 @@
 """
 from datetime import datetime
 
-from sqlalchemy import Column, Integer, String, Boolean, DateTime, func
+from sqlalchemy import Column, Integer, String, Boolean, DateTime, func, BigInteger
 
 from .db import Base
 
@@ -11,7 +11,7 @@ from .db import Base
 class User(Base):
     __tablename__ = "users"
     id = Column(Integer, primary_key=True)
-    chat_id = Column(Integer, unique=True)
+    chat_id = Column(BigInteger, unique=True)
     first_name = Column(String(50))
     last_name = Column(String(50))
     username = Column(String(50))
