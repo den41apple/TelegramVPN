@@ -40,7 +40,7 @@ services:
     container_name: nginx
     image: nginx:1.25-alpine-slim
     ports:
-      - "8888:8888"
+      - "8000:8000"
     volumes:
       - ./frontend/static:/static
       - ./docker/nginx.conf:/etc/nginx/conf.d/site.conf
