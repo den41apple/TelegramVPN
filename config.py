@@ -12,15 +12,17 @@ env = Env()
 ########################################################################################################################
 TG_TOKEN = env.str("TG_TOKEN")
 TG_UPDATE_MODE = env.str("TG_UPDATE_MODE", default="pooling")  # pooling | webhook
-TG_WEBHOOK_HOST = env.str("TG_WEBHOOK_HOST")
+# Обязательные для веб-хука
+TG_WEBHOOK_HOST = env.str("TG_WEBHOOK_HOST", default="")
 TG_WEBHOOK_PATH = env.str("TG_WEBHOOK_PATH", default="/path/to/api")
-TG_WEBAPP_HOST = env.str("TG_WEBAPP_HOST", default="localhost")
+TG_WEBAPP_HOST = env.str("TG_WEBAPP_HOST", default="0.0.0.0")
 TG_APP_PORT = env.str("TG_APP_PORT", default="8088")
+
 TG_ADMINS: set = env.list("TG_ADMINS", default={}, postprocessor=lambda x: set(map(int, x)))  # Chat_ids администраторов
 # Домен по умолчанию при регистрации пользователя
 TG_DEFAULT_EMAIL_DOMAIN = env.str("TG_DEFAULT_EMAIL_DOMAIN", default="telegram_bot.ru")
 # SQLAlchemy
-TG_DB_NAME = env.str("TG_DB_NAME")
+TG_DB_NAME = env.str("TG_DB_NAME", default="bot")
 TG_DB_ECHO = env.bool("TG_DB_ECHO", default=False)
 
 # FIREZONE
@@ -32,8 +34,8 @@ FZ_TOKEN = env.str("FZ_TOKEN")
 ########################################################################################################################
 DJ_SECRET_KEY = env.str("DJ_SECRET_KEY")
 DJ_TELEGRAM_BOT_URL = env.str("DJ_TELEGRAM_BOT_URL")
-DJ_DEBUG = env.bool("DJ_DEBUG", default=True)
-DJ_DB_NAME = env.str("DJ_DB_NAME")
+DJ_DEBUG = env.bool("DJ_DEBUG", default=False)
+DJ_DB_NAME = env.str("DJ_DB_NAME", default="site")
 # url с портом разрешенные для генерации csrf токенов
 DJ_CSRF_TRUSTED_ORIGINS = env.list("DJ_CSRF_TRUSTED_ORIGINS", default=[])
 
