@@ -9,9 +9,12 @@ services:
     env_file:
       - .env
     environment:
+      POSTGRES_PORT: 5432
       POSTGRES_HOST: pg
     volumes:
       - ./:/app
+    ports:
+      - "8088:8088"
     depends_on:
       pg:
         condition: service_healthy

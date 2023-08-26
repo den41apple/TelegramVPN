@@ -11,6 +11,7 @@ env = Env()
 #                                                 ТЕЛЕГРАМ БОТ                                                         #
 ########################################################################################################################
 TG_TOKEN = env.str("TG_TOKEN")
+TG_UPDATE_MODE = env.str("TG_UPDATE_MODE", default="pooling")  # pooling | webhook
 TG_WEBHOOK_HOST = env.str("TG_WEBHOOK_HOST")
 TG_WEBHOOK_PATH = env.str("TG_WEBHOOK_PATH", default="/path/to/api")
 TG_WEBAPP_HOST = env.str("TG_WEBAPP_HOST", default="localhost")
