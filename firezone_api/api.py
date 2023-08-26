@@ -73,15 +73,14 @@ class FirezoneApi:
                     try:
                         # Если пользователь уже существует
                         if response.status == 422:
-                            email_list = (await response.json())['errors']['email']
+                            email_list = (await response.json())["errors"]["email"]
                     except:
                         pass
                     else:
                         if "has already been taken" in email_list:
                             raise UserAlreadyExistsError
                     try:
-                        message += (f"\nSTATUS CODE :: {response.status}\n"
-                                    f"Ответ от сервера: {await response.text()}")
+                        message += f"\nSTATUS CODE :: {response.status}\n" f"Ответ от сервера: {await response.text()}"
                     except:
                         pass
                     raise CreateUserError(message)
@@ -154,7 +153,6 @@ class FirezoneApi:
             "device": {
                 "description": description,
                 "name": device_name,
-                "preshared_key": self._keys_generator.preshared_key,
                 "public_key": self._keys_generator.public_key,
                 "user_id": user_id,
             }

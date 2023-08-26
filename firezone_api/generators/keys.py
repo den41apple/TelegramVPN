@@ -1,18 +1,16 @@
 """
 Генератор секретных ключей
 """
-from pywgkey.key import WgKey, WgPsk
+from wireguard_tools import WireguardKey
 
 
 class KeysGenerator:
     def __init__(self):
+        self.private_key: str = None
         self.public_key: str = None
         self.private_key: str = None
-        self.preshared_key: str = None
 
     def generate(self):
-        keys_pair = WgKey()
-        psk_key = WgPsk()
-        self.public_key = keys_pair.privkey
-        self.private_key = keys_pair.pubkey
-        self.preshared_key = psk_key.key
+        self.private_key = WireguardKey.generate()
+        self.public_key = str(self.private_key.public_key())
+        self.private_key = str(self.private_key)
