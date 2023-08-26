@@ -45,7 +45,7 @@ def prepare_config_file(device: Device, file_name: str) -> tuple[StringIO, str]:
     }
     config["Peer"] = {
         "PresharedKey": device.preshared_key,
-        "PublicKey": device.public_key,
+        "PublicKey": device.server_public_key,
         "AllowedIPs": ",".join(device.allowed_ips),
         "Endpoint": device.endpoint,
         "PersistentKeepalive": "25",

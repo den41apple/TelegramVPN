@@ -31,15 +31,3 @@ class QrCodeGenerator:
                 self.img.save(file)
         else:
             self.img.save(stream)
-
-
-if __name__ == "__main__":
-    # TODO: Удалить тестирование
-    generator = QrCodeGenerator()
-    generator.generate(data="dafdsalkjsadlnkgfajkg")
-    from io import BytesIO
-
-    file = BytesIO()
-    generator.save(stream=file)
-    file.seek(0)
-    print(file.read()[:100])
