@@ -32,6 +32,9 @@ async def on_startup(dp: Dispatcher):
 def main():
     if config.TG_UPDATE_MODE == "webhook":
         print("START WEBHOOK")
+        kwargs = {}
+        if config.TG_CERTIFICATE:
+            kwargs.update(certificate=config.TG_CERTIFICATE)
         start_webhook(
             dispatcher=dispatcher,
             webhook_path=WEBHOOK_PATH,
@@ -40,6 +43,7 @@ def main():
             skip_updates=True,
             host=config.TG_WEBAPP_HOST,
             port=config.TG_APP_PORT,
+            **kwargs,
         )
     else:
         print("START POOLING")
