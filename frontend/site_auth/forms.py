@@ -31,7 +31,7 @@ class AuthenticationForm(AuthenticationFormGeneric):
 
 class UserCreationForm(UserCreationFormGeneric):
     model = User
-    telegram_chat_id = forms.CharField(label="Id чата в Telegram", required=False)
+    telegram_chat_id = forms.CharField(label="Id чата в Telegram", required=False, empty_value=None)
 
     class Meta(UserCreationFormGeneric.Meta):
         fields = "username", "telegram_chat_id"

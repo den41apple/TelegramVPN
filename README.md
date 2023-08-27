@@ -44,8 +44,8 @@ DJ_CSRF_TRUSTED_ORIGINS = http://127.0.0...,
 ```
 
 
-### 3. Запуск
-#### С помощью Docker:
+### 3. Варианты запуска
+#### Docker:
 ```
 docker compose build
 docker compose up -d bot  # Телеграм бот
