@@ -21,10 +21,7 @@ bot_app = HandlersRegistrator(bot=bot, dispatcher=dispatcher)
 
 async def on_startup(dp: Dispatcher):
     if config.TG_UPDATE_MODE == "webhook":
-        kwargs = {}
-        if config.TG_CERTIFICATE:
-            kwargs.update(certificate=config.TG_CERTIFICATE)
-        await bot.set_webhook(WEBHOOK_URL, **kwargs)
+        await bot.set_webhook(WEBHOOK_URL)
     user_commands = [
         types.BotCommand("start", "Домой"),
         types.BotCommand("admin", "Админ. панель"),
