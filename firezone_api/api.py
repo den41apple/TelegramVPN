@@ -7,7 +7,7 @@ import json
 import aiohttp
 
 import config
-from firezone_api.exceptions import CreateUserError, UserAlreadyExistsError
+from firezone_api.exceptions import CreateUserError, UserAlreadyExistsError, UserNotFoundError, UndefinedException
 from firezone_api.generators import KeysGenerator
 from firezone_api.models import User, Device
 
@@ -49,6 +49,12 @@ class FirezoneApi:
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._headers) as response:
                 response_data: dict = await response.json()
+                if "error" in response_data:
+                    error = response_data["error"]
+                    match error:
+                        case "not_found":
+                            raise UserNotFoundError("Такой пользователь не зарегистрирован")
+                    raise UndefinedException(error)
                 user: dict = response_data["data"]
                 user: User = User(**user)
                 return user
@@ -119,6 +125,7 @@ class FirezoneApi:
         url = f"{self._host}/v0/devices"
         async with aiohttp.ClientSession() as session:
             async with session.get(url, headers=self._headers) as response:
+                # TODO: {'errors': {'auth': 'invalid_token'}} Оповещение админу надо
                 response_data: dict = await response.json()
                 devices: list[dict] = response_data["data"]
                 devices: list[Device] = [Device(**device) for device in devices]

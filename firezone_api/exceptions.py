@@ -1,6 +1,14 @@
-class CreateUserError(Exception):
+class UndefinedException(Exception):
     pass
 
 
-class UserAlreadyExistsError(Exception):
+class CreateUserError(UndefinedException):
+    pass
+
+
+class UserAlreadyExistsError(UndefinedException):
+    pass
+
+
+class UserNotFoundError(UndefinedException):
     pass
