@@ -13,7 +13,7 @@ env = Env()
 TG_TOKEN = env.str("TG_TOKEN")
 TG_UPDATE_MODE = env.str("TG_UPDATE_MODE", default="pooling")  # pooling | webhook
 # Обязательные для веб-хука
-TG_WEBHOOK_HOST = env.str("TG_WEBHOOK_HOST", default="")
+TG_WEBHOOK_HOST = env.str("TG_WEBHOOK_HOST", default="").strip()
 TG_WEBHOOK_PATH = env.str("TG_WEBHOOK_PATH", default="")
 TG_WEBAPP_HOST = env.str("TG_WEBAPP_HOST", default="0.0.0.0")
 TG_APP_PORT = env.str("TG_APP_PORT", default="8088")

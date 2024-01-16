@@ -32,12 +32,19 @@ class Devices:
         # Определим передан ли конкретный Id пользователя
         fz_user_id_from_data = extract_id_from_callback_data(callback_query)
         if fz_user_id is None:
+            # TODO: FZ_USER переименовать в обычного пользователя
             if fz_user_id_from_data is None:
                 fz_user = await get_user_by_chat_id(chat_id=chat_id)
                 fz_user_id = fz_user.fz_user_id
             else:
                 fz_user_id = fz_user_id_from_data
         devices: list[Device] = await self._api.get_devices(user_id=fz_user_id)
+        if not devices:
+            # TODO: Отработать вариант с отсутствием пользователя
+            # Если нет устройств, проверяем есть ли такой пользователь
+            # TODO: А этого в FZ_USER
+            _user = await self._api.get_user_by_id(user_id=fz_user_id)
+            c=1
         answer = "*Устройства:*\n\n"
         if len(devices) == 0:
             answer += "Еще нет устройств"
@@ -74,6 +81,10 @@ class Devices:
 
         if len(row) != 0:
             keyboard.add(*row)
+
+    def _device_not_found(self):
+        # TODO: Реализовать формирование сообщения в случае отсутствия девайса
+        pass
 
     async def get_name_for_new_device(self, callback_query: CallbackQuery, state: FSMContext):
         """
