@@ -20,37 +20,6 @@ services:
       pg:
         condition: service_healthy
 
-  site:
-    container_name: site
-    build:
-      dockerfile: docker/Dockerfile_site
-      context: ./
-    env_file:
-      - .env
-    environment:
-      DJ_DEBUG: False
-      POSTGRES_PORT: 5432
-      POSTGRES_HOST: pg
-    volumes:
-      - ./:/app
-#    ports:
-#      - "8000:8000"
-    depends_on:
-      nginx:
-        condition: service_started
-      pg:
-        condition: service_healthy
-
-  nginx:
-    container_name: nginx
-    image: nginx:1.25-alpine-slim
-    ports:
-      - "8000:8000"
-    volumes:
-      - ./frontend/static:/static
-      - ./docker/nginx.conf:/etc/nginx/conf.d/site.conf
-    restart: always
-
   pg:
     container_name: pg
     image: postgres:14-bullseye
