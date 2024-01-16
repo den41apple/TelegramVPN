@@ -2,13 +2,14 @@
 Работа с Firezone API
 Документация https://www.firezone.dev/docs/reference/rest-api/
 """
-import aiohttp
 import json
 
+import aiohttp
+
 import config
-from firezone_api.models import User, Device
-from firezone_api.generators import KeysGenerator
 from firezone_api.exceptions import CreateUserError, UserAlreadyExistsError
+from firezone_api.generators import KeysGenerator
+from firezone_api.models import User, Device
 
 
 class FirezoneApi:

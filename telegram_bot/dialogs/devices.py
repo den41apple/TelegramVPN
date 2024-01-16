@@ -4,8 +4,8 @@
 import asyncio
 
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message, CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message, CallbackQuery
 
 from firezone_api import FirezoneApi
 from firezone_api.models import Device
@@ -165,7 +165,7 @@ class Devices:
         """
         if size is None:
             return f"0 B"
-        power = 2**10
+        power = 2 ** 10
         n = 0
         power_labels = {0: "", 1: "Kb", 2: "Mb", 3: "Gb", 4: "Tb"}
         while size > power:

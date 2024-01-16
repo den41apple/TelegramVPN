@@ -2,9 +2,8 @@
 Основной диалог при начале разговора
 """
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
-from aiogram.utils.deep_linking import decode_payload
+from aiogram.types import Message
 
 import config
 from firezone_api import FirezoneApi

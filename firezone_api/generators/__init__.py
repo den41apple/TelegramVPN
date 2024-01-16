@@ -1,2 +1,2 @@
-from .qr import QrCodeGenerator
 from .keys import KeysGenerator
+from .qr import QrCodeGenerator

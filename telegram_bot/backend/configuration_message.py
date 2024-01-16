@@ -1,17 +1,17 @@
 """
 Подготавливает QR код и файл конфигурации
 """
+import configparser
 from io import StringIO, BytesIO
 
-from firezone_api.models import Device
 from firezone_api.generators import QrCodeGenerator
-import configparser
+from firezone_api.models import Device
 
 qr_generator = QrCodeGenerator()
 
 
 def prepare_configuration_qr_and_message(
-    device: Device, file_name: str = "EuroHoster.conf"
+        device: Device, file_name: str = "EuroHoster.conf"
 ) -> tuple[StringIO, BytesIO]:
     """
     Подготавливает файл конфигурации и QR код

@@ -2,13 +2,12 @@
 Администрирование
 """
 from aiogram.dispatcher import FSMContext
-from aiogram.types import Message
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
+from aiogram.types import Message
 
 from firezone_api import FirezoneApi
 from telegram_bot.backend.utils import check_admin_access
 from telegram_bot.dialogs.users import Users
-
 
 
 class Admin:
@@ -22,5 +21,3 @@ class Admin:
         keyboard.add(InlineKeyboardButton("Список пользователей", callback_data=f"/list_users"))
         keyboard.add(InlineKeyboardButton("Добавить пользователя", callback_data=f"/{Users.add_user_prefix}"))
         await message.answer(message_text, reply_markup=keyboard)
-
-

@@ -1,12 +1,11 @@
 import asyncio
 from logging.config import fileConfig
 
-from sqlalchemy import engine_from_config
+from alembic import context
 from sqlalchemy import pool
 from sqlalchemy.engine import Connection
 from sqlalchemy.ext.asyncio import async_engine_from_config
 
-from alembic import context
 from telegram_bot.backend.db.db import Base, DB_URL
 
 # this is the Alembic Config object, which provides

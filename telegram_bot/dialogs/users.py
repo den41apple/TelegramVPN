@@ -8,12 +8,11 @@ from aiogram.types import CallbackQuery
 from aiogram.types import InlineKeyboardMarkup, InlineKeyboardButton
 from aiogram.utils.deep_linking import get_start_link
 
-import config
 from firezone_api import FirezoneApi
 from firezone_api.models import User
 from telegram_bot.backend.db import async_session
-from telegram_bot.backend.db.models import DeeplinkAction
 from telegram_bot.backend.db.actions import get_all_users, get_user_by_fz_user_id
+from telegram_bot.backend.db.models import DeeplinkAction
 from telegram_bot.backend.utils import (check_admin_access, generate_password, escaping,
                                         extract_id_from_callback_data)
 from telegram_bot.dialogs.devices import Devices

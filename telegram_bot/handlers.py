@@ -72,4 +72,3 @@ class HandlersRegistrator:
             self.users.generate_user_create_link,
             text_contains=Users.generate_user_create_link_prefix, state="*"
         )
-

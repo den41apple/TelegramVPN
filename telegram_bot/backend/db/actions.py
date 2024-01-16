@@ -1,10 +1,11 @@
 """
 Действия с Базой данных
 """
-from telegram_bot.backend.db import async_session
-from telegram_bot.backend.db.models import User, DeeplinkAction
 from sqlalchemy import select
 from sqlalchemy.engine import Result
+
+from telegram_bot.backend.db import async_session
+from telegram_bot.backend.db.models import User, DeeplinkAction
 
 
 async def get_user_by_chat_id(chat_id: int) -> User | None:

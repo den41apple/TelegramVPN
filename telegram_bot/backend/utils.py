@@ -1,8 +1,8 @@
 """
 Полезные инструменты
 """
-import re
 import random
+import re
 from typing import Any, Callable
 
 from aiogram.dispatcher import FSMContext

@@ -6,7 +6,6 @@ from pathlib import Path
 
 import qrcode
 from qrcode.image.styledpil import StyledPilImage
-from qrcode.image.styles.colormasks import SolidFillColorMask, RadialGradiantColorMask
 from qrcode.image.styles.moduledrawers.pil import CircleModuleDrawer
 
 current_dir = Path(__file__).resolve().parent
