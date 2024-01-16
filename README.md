@@ -51,6 +51,6 @@ python frontend/manage.py migrate
 ```
 ##### Telegram бот
 ```shell
-python run_app.py
+python main.py
 ```
 
